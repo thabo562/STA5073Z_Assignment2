@@ -1,0 +1,53 @@
+---
+title: "Assignment 1"
+author: "Natalie Alexander, Thabo Dube & Kelly-Robyn Singh"
+date: "2023-10-06"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(stringr)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+
+install.packages("tidytext")
+library(tidytext)
+
+#update r and install git
+install.packages("remotes")
+remotes::install_github(sprintf("rstudio/%s",
+                        c("reticulate", "tensorflow", "keras")))
+keras:: install_keras()
+library(keras)
+library(tensorflow)
+tf$constant("Hello world")
+```
+
+```{r}
+#update r and install git
+install.packages("remotes")
+remotes::install_github(sprintf("rstudio/%s",
+                        c("reticulate", "tensorflow", "keras")))
+keras:: install_keras()
+library(keras)
+library(tensorflow)
+tf$constant("Hello world")
+```
+
+
+```{r Reading in Data}
+set.seed(2022)
+load("F:/STA5073Z- DS4I/pre-processed assignment data.RData") # you can change to where you have it saved
+sona<-sona%>% mutate(speech= str_replace(speech, "\\d{1,2} [A-Za-z]+ \\d{4}", "")) # Remove dates at the start of the speech
+sona<- sona%>% mutate(speech= str_replace(speech, pattern = "^Thursday, ", replacement = ""))# remove dates on 2 remaining Ramaphosa speeches 
+sona<- sona%>% mutate(speech= str_trim(speech, side= "left"))
+
+Sona_S_tokenized<- unnest_tokens(sona, sentence, speech, token = 'sentences') 
+Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence, "[[:punct:]]", ""))
+
+```
+
