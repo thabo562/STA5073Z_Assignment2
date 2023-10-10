@@ -13,7 +13,8 @@ library(stringr)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
-
+install.packages("textdata")
+library(textdata)
 install.packages("tidytext")
 library(tidytext)
 
@@ -48,6 +49,29 @@ sona<- sona%>% mutate(speech= str_trim(speech, side= "left"))
 
 Sona_S_tokenized<- unnest_tokens(sona, sentence, speech, token = 'sentences') 
 Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence, "[[:punct:]]", ""))
+
+```
+
+```{r Data analyisis}
+afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
+
+speech_data_tidy <- sona %>%
+  unnest_tokens(word, speech, token = "words")
+speech_data_tidy<- speech_data_tidy%>% mutate(word= str_replace_all(word, "[[:punct:]]", ""))
+
+speech_data_sentiment <- speech_data_tidy %>%
+  inner_join(get_sentiments("afinn")) %>%
+  group_by(president_13)
+
+
+speech_data_sentiment%>% filter(president_13=="Mandela")%>%
+                        ggplot( aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "blue") +
+  labs(x = "Sentiment Value", y = "Count") +
+  ggtitle("Count of Words by Sentiment Value")
+
+
+
 
 ```
 
