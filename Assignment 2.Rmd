@@ -52,7 +52,11 @@ Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence
 
 ```
 
-```{r Data analyisis}
+# Data Analysis
+```{r Data analyisis} 
+afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
+bing <- get_sentiments('bing')
+
 afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
 
 speech_data_tidy <- sona %>%
@@ -64,14 +68,32 @@ speech_data_sentiment <- speech_data_tidy %>%
   group_by(president_13)
 
 
+speech_data_sentiment$value<- as.integer(speech_data_sentiment$value)
+
 speech_data_sentiment%>% filter(president_13=="Mandela")%>%
                         ggplot( aes(x = value)) +
   geom_histogram(binwidth = 1, fill = "blue") +
   labs(x = "Sentiment Value", y = "Count") +
-  ggtitle("Count of Words by Sentiment Value")
+  ggtitle("Count of Words by Sentiment Value")+
+  scale_x_continuous(labels = label_number(accuracy = 1))
 
+```
 
+```{r Top positive words}
+speech_data_sentiment %>% filter(value>0 & president_13=="Mandela" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
+```
 
-
+```{r Top negative words}
+speech_data_sentiment %>% filter(value< 0 & president_13=="Mandela" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
 ```
 
