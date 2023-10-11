@@ -128,47 +128,86 @@ grid.arrange(DeKlerk1,Mandela1, Mbeki1, Zuma1, Motlanthe1,Ramaphosa1,ncol = 2, n
 ```
 
 ```{r Top negative words}
-speech_data_sentiment %>% filter(value<0 & president_13=="Mandela" ) %>%
+Mandela2<-speech_data_sentiment %>% filter(value<0 & president_13=="Mandela" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
 
-speech_data_sentiment %>% filter(value<0 & president_13=="Mbeki" ) %>%
+Mbeki2<-speech_data_sentiment %>% filter(value<0 & president_13=="Mbeki" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Mbeki")+theme(plot.title = element_text(hjust=0.5))
 
-speech_data_sentiment %>% filter(value<0 & president_13=="Zuma" ) %>%
+Zuma2<-speech_data_sentiment %>% filter(value<0 & president_13=="Zuma" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Zuma")+theme(plot.title = element_text(hjust=0.5))
 
-speech_data_sentiment %>% filter(value<0 & president_13=="deKlerk" ) %>%
+DeKlerk2<-speech_data_sentiment %>% filter(value<0 & president_13=="deKlerk" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("deKlerk")+theme(plot.title = element_text(hjust=0.5))
 
-speech_data_sentiment %>% filter(value<0 & president_13=="Motlanthe" ) %>%
+Motlanthe2<-speech_data_sentiment %>% filter(value<0 & president_13=="Motlanthe" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Motlanthe")+theme(plot.title = element_text(hjust=0.5))
 
-speech_data_sentiment %>% filter(value<0 & president_13=="Ramaphosa" ) %>%
+Ramaphosa2<-speech_data_sentiment %>% filter(value<0 & president_13=="Ramaphosa" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Ramaphosa")+theme(plot.title = element_text(hjust=0.5))
 
+grid.arrange(DeKlerk2,Mandela2, Mbeki2, Zuma2, Motlanthe2,Ramaphosa2,ncol = 2, nrow = 3)
+```
+
+```{r Changes in sentiment over time}
+
+speech_data_tidy$date<- as.Date(speech_data_tidy$date, format = "%d-%m-%Y")
+
+
+tidy_tweets <- tidy_tweets %>% 
+  left_join(bing) %>%                              #add sentiments (pos or neg)
+  select(word, sentiment, everything()) %>%
+  mutate(sentiment = ifelse(word == 'trump', NA, sentiment)) %>%     #'trump' is a positive word in the bing lexicon!
+  mutate(sentiment = ifelse(is.na(sentiment), 'neutral', sentiment))
 
 ```
+
+
+```{r Aggregating sentiment over speeches}
+sentiments_per_speech <- speech_data_sentiment %>%
+                          group_by(filename,president_13,date)%>%
+                        summarize(net_sentiment = (sum(value)), .groups = "keep")
+ 
+# Convert the character dates to date format
+sentiments_per_speech$date<- as.Date(sentiments_per_speech$date, format = "%d-%m-%Y")
+
+
+
+```
+
+
+```{r}
+ngram_separated  <- sona %>%
+  mutate(text = str_replace_all(speech, replace_reg, '')) %>%
+  unnest_tokens(ngram, speech, token = 'ngrams', n = 4) %>%
+  separate(ngram, c('word1', 'word2','word3','word4'), sep = ' ')%>%
+  select(-text)
+
+
+```
+
+
