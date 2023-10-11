@@ -13,6 +13,8 @@ library(stringr)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
+install.packages("ggpubr")
+library(ggpubr)
 install.packages("textdata")
 library(textdata)
 install.packages("tidytext")
@@ -57,8 +59,6 @@ Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence
 afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
 bing <- get_sentiments('bing')
 
-afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
-
 speech_data_tidy <- sona %>%
   unnest_tokens(word, speech, token = "words")
 speech_data_tidy<- speech_data_tidy%>% mutate(word= str_replace_all(word, "[[:punct:]]", ""))
@@ -80,19 +80,95 @@ speech_data_sentiment%>% filter(president_13=="Mandela")%>%
 ```
 
 ```{r Top positive words}
-speech_data_sentiment %>% filter(value>0 & president_13=="Mandela" ) %>%
+Mandela1<-speech_data_sentiment %>% filter(value>0 & president_13=="Mandela" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
+
+Mbeki1<-speech_data_sentiment %>% filter(value>0 & president_13=="Mbeki" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Mbeki")+theme(plot.title = element_text(hjust=0.5))
+
+Zuma1<-speech_data_sentiment %>% filter(value>0 & president_13=="Zuma" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Zuma")+theme(plot.title = element_text(hjust=0.5))
+
+DeKlerk1<-speech_data_sentiment %>% filter(value>0 & president_13=="deKlerk" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("deKlerk")+theme(plot.title = element_text(hjust=0.5))
+
+Motlanthe1<-speech_data_sentiment %>% filter(value>0 & president_13=="Motlanthe" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Motlanthe")+theme(plot.title = element_text(hjust=0.5))
+
+Ramaphosa1<-speech_data_sentiment %>% filter(value>0 & president_13=="Ramaphosa" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Ramaphosa")+theme(plot.title = element_text(hjust=0.5))
+
+
+grid.arrange(DeKlerk1,Mandela1, Mbeki1, Zuma1, Motlanthe1,Ramaphosa1,ncol = 2, nrow = 3)
+
 ```
 
 ```{r Top negative words}
-speech_data_sentiment %>% filter(value< 0 & president_13=="Mandela" ) %>%
+speech_data_sentiment %>% filter(value<0 & president_13=="Mandela" ) %>%
   count(word) %>%
   arrange(desc(n)) %>%
   filter(rank(desc(n)) <= 20) %>%
   ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
   ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
+
+speech_data_sentiment %>% filter(value<0 & president_13=="Mbeki" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Mbeki")+theme(plot.title = element_text(hjust=0.5))
+
+speech_data_sentiment %>% filter(value<0 & president_13=="Zuma" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Zuma")+theme(plot.title = element_text(hjust=0.5))
+
+speech_data_sentiment %>% filter(value<0 & president_13=="deKlerk" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("deKlerk")+theme(plot.title = element_text(hjust=0.5))
+
+speech_data_sentiment %>% filter(value<0 & president_13=="Motlanthe" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Motlanthe")+theme(plot.title = element_text(hjust=0.5))
+
+speech_data_sentiment %>% filter(value<0 & president_13=="Ramaphosa" ) %>%
+  count(word) %>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20) %>%
+  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
+  ggtitle("Ramaphosa")+theme(plot.title = element_text(hjust=0.5))
+
+
 ```
