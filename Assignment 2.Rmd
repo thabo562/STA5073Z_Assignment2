@@ -6,7 +6,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-
+#Pre processing 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE) 
 library(stringr)
@@ -195,17 +195,22 @@ sentiments_per_speech <- speech_data_sentiment %>%
 # Convert the character dates to date format
 sentiments_per_speech$date<- as.Date(sentiments_per_speech$date, format = "%d-%m-%Y")
 
-
+ggplot(sentiments_per_speech, aes(x=date, y=net_sentiment)) +
+  geom_line( color="#6960c2", size=1.2, alpha=0.9, linetype=1) +
+  ggtitle("Speech sentiment over time")+
+  theme(plot.title = element_text(hjust=0.5))+
+  xlab("Time")+ ylab("Net Sentiment")
 
 ```
 
-
-```{r}
+# Sentiment Analysis 
+```{r n grams sentiment analysis}
 ngram_separated  <- sona %>%
   mutate(text = str_replace_all(speech, replace_reg, '')) %>%
   unnest_tokens(ngram, speech, token = 'ngrams', n = 4) %>%
   separate(ngram, c('word1', 'word2','word3','word4'), sep = ' ')%>%
   select(-text)
+
 
 
 ```
