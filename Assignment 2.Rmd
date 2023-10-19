@@ -54,46 +54,1205 @@ Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence
 
 # Data Analysis
 ```{r Data analyisis} 
+
 afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
 bing <- get_sentiments('bing')
 
 afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
 
-speech_data_tidy <- sona %>%
-  unnest_tokens(word, speech, token = "words")
-speech_data_tidy<- speech_data_tidy%>% mutate(word= str_replace_all(word, "[[:punct:]]", ""))
 
-speech_data_sentiment <- speech_data_tidy %>%
-  inner_join(get_sentiments("afinn")) %>%
-  group_by(president_13)
-
-
-speech_data_sentiment$value<- as.integer(speech_data_sentiment$value)
-
-speech_data_sentiment%>% filter(president_13=="Mandela")%>%
-                        ggplot( aes(x = value)) +
-  geom_histogram(binwidth = 1, fill = "blue") +
-  labs(x = "Sentiment Value", y = "Count") +
-  ggtitle("Count of Words by Sentiment Value")+
-  scale_x_continuous(labels = label_number(accuracy = 1))
 
 ```
 
-```{r Top positive words}
-speech_data_sentiment %>% filter(value>0 & president_13=="Mandela" ) %>%
-  count(word) %>%
+# 3. Bigram tokenization
+
+```{r}
+# #put data into tidy format and tokenize to bigrams
+df_bigrams <- sona %>%
+  unnest_tokens(bigram, speech, token = 'ngrams', n = 2, to_lower = T) %>%
+select(bigram, everything())
+
+#strip all punctuation and numeric characters from each bigram
+df_stripped_bigrams = df_bigrams%>%
+  mutate(bigram= str_replace_all(bigram, "[[:punct:]]", "")) #remove punctuation
+
+  
+# separate the bigrams 
+df_separated_bigrams <- df_stripped_bigrams %>%
+  separate(bigram, c('word1', 'word2'), sep = ' ')
+
+# remove stop words
+df_filtered_bigrams <- df_separated_bigrams %>%
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) 
+
+# join up the bigrams again
+df_bigrams <- df_filtered_bigrams %>%
+  unite(bigram, word1, word2, sep = ' ')
+
+```
+
+
+#  A. Sentiment analysis
+
+```{r}
+# separate the bigrams again
+df_separated_bigrams <- df_bigrams  %>%
+  separate(bigram, c('word1', 'word2'), sep = ' ')
+
+#use afinn sentiments
+##join with sentiment data based on word1
+bigrams_word1_sentiment <- df_separated_bigrams %>%
+  select(word1)%>%
+  left_join(afinn, by = c("word1" = "word")) %>%
+  rename(word1_sentiment = value)
+
+##join with sentiment data based on word2
+bigrams_word2_sentiment <- df_separated_bigrams %>%
+  select(word2)%>%
+  left_join(afinn, by = c("word2" = "word")) %>%
+  rename(word2_sentiment = value)
+
+
+#remove word 1 and word 2 column from original bigrams separtaed data frame
+df_separated_bigrams = df_separated_bigrams %>% select(filename, year, president_13, date)
+
+#combine sentiments for word1 and word2 into 1 dataframe
+bigrams_sentiment = cbind(df_separated_bigrams, bigrams_word1_sentiment , bigrams_word2_sentiment )
+
+###############################################################################
+
+#Find negation words - we find none
+#negation words
+negation_words <- c('not', 'no', 'never', 'without')
+
+# show a few
+filter(bigrams_sentiment, word1 %in% negation_words) %>% 
+  head(10) %>% select(year, word1, word2, word1_sentiment, word2_sentiment)
+ 
+################################################################################
+
+## replacing NA with 0 just gives lots of neutral sentiments
+#let sentiment of word = 0 if sentiment = NA
+# bigrams_sentiment$word1_sentiment[is.na(bigrams_sentiment[, 'word1_sentiment'])] = 0 #sentiment for word 1
+# bigrams_sentiment$word2_sentiment[is.na(bigrams_sentiment[, 'word2_sentiment'])] = 0 #sentiment for word 2
+
+#remove bigrams where either word 1 or word 2 or both have sentiment == NA ---> not useful
+# bigrams_sentiment = bigrams_sentiment[!is.na(bigrams_sentiment$word1_sentiment) & !is.na(bigrams_sentiment$word2_sentiment), ]
+###############################################################################
+
+#convert na to 0
+bigrams_sentiment$word1_sentiment[is.na(bigrams_sentiment$word1_sentiment)] = 0 #word1
+bigrams_sentiment$word2_sentiment[is.na(bigrams_sentiment$word2_sentiment)] = 0 #word2
+
+#extract sentiments for word1 and word2 and calculate total bigram sentiment
+total_sentiment = rowSums(cbind(bigrams_sentiment$word1_sentiment, bigrams_sentiment$word2_sentiment))
+
+#append total sentiment to bigrams data frame
+df_bigram_total_sentiment = bigrams_sentiment %>% select(word1, word2, filename, year, president_13, date)%>%
+  mutate(sentiment=total_sentiment)
+
+
+```
+
+
+# 5. Results of sentiment analysis per president
+
+```{r}
+
+#sentiment analysis per president
+
+## Mandela numeric sentiment
+mandela_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Mandela")
+
+## Mandela sentiment logical 
+mandela_sentiment = ifelse(mandela_sentiment$sentiment < 0, "negative", ifelse(mandela_sentiment$sentiment > 0, "positive", "neutral"))
+
+#find majority sentiment
+table(mandela_sentiment)
+
+###############################################################################
+
+## Mbeki numeric sentiment
+Mbeki_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Mbeki")
+
+## Mbeki sentiment logical 
+Mbeki_sentiment = ifelse(Mbeki_sentiment$sentiment < 0, "negative", ifelse(Mbeki_sentiment$sentiment > 0, "positive", "neutral"))
+
+#find majority sentiment
+table(Mbeki_sentiment)
+
+###############################################################################
+
+## Ramaphosa numeric sentiment
+Ramaphosa_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Ramaphosa")
+
+## Ramaphosa sentiment logical 
+Ramaphosa_sentiment = ifelse(Ramaphosa_sentiment$sentiment < 0, "negative", ifelse(Ramaphosa_sentiment$sentiment > 0, "positive", "neutral"))
+
+#find majority sentiment
+table(Ramaphosa_sentiment)
+
+###############################################################################
+
+## Zuma numeric sentiment
+Zuma_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Zuma")
+
+## Zuma sentiment logical 
+Zuma_sentiment = ifelse(Zuma_sentiment$sentiment < 0, "negative", ifelse(Zuma_sentiment$sentiment > 0, "positive", "neutral"))
+
+#find majority sentiment
+table(Zuma_sentiment)
+
+###############################################################################
+
+## deKlerk numeric sentiment
+deKlerk_sentiment = df_bigram_total_sentiment %>% filter(president_13=="deKlerk")
+
+## deKlerk sentiment logical 
+deKlerk_sentiment = ifelse(deKlerk_sentiment$sentiment < 0, "negative", ifelse(deKlerk_sentiment$sentiment > 0, "positive", "neutral"))
+
+#find majority sentiment
+table(deKlerk_sentiment)
+
+
+###############################################################################
+
+## Motlanthe numeric sentiment
+Motlanthe_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Motlanthe")
+
+## Motlanthe sentiment logical 
+Motlanthe_sentiment = ifelse(Motlanthe_sentiment$sentiment < 0, "negative", ifelse(Motlanthe_sentiment$sentiment > 0, "positive", "neutral"))
+
+#find majority sentiment
+table(Motlanthe_sentiment)
+
+```
+
+# 6. Results of sentiment analysis per speech
+
+```{r}
+
+#file names of each unique file containing a speech
+filenames = unique(df_bigram_total_sentiment$filename)
+
+i = 1 #counter
+
+#get sentiment for each speech
+for (speech in filenames) {
+  
+  #filter numeric sentiment by speech
+  speech_sentiment = df_bigram_total_sentiment %>% filter(filename==speech) 
+  
+  #get logical sentiment: neutral, negative or positive
+  speech_logical_sentiment = ifelse(speech_sentiment$sentiment < 0, "negative", ifelse(speech_sentiment$sentiment > 0, "positive", "neutral"))
+  
+  #get frequency of sentiment
+  tbl_sentiment=table(speech_logical_sentiment)
+  
+  #print out sentiment per speech
+  print(paste0(filenames[i], "sentiment is:"))
+  print(tbl_sentiment)
+  i = i + 1 #jump to next counter
+  
+}
+
+```
+
+# 7. Sentiment per year
+
+```{r}
+#years
+years = unique(df_bigram_total_sentiment$year)
+
+i = 1 #counter
+
+#get sentiment for each year
+for (year in years) {
+  
+  #filter numeric sentiment by year
+  year_sentiment = df_bigram_total_sentiment %>% filter(year==year) 
+  
+  #get logical sentiment: neutral, negative or positive
+  year_logical_sentiment = ifelse(year_sentiment$sentiment < 0, "negative", ifelse(year_sentiment$sentiment > 0, "positive", "neutral"))
+  
+  #get frequency of sentiment
+  tbl_sentiment=table(year_logical_sentiment)
+  
+  #print out sentiment per year
+  print(paste0(years[i], " sentiment is:"))
+  print(tbl_sentiment)
+  
+  i = i + 1 #jump to next counter
+  
+}
+```
+
+
+# 8. Total sentiment over all years, all speeches and across all presidents
+
+```{r}
+#negative, if total sentiment < 0
+#positive, else if total sentiment > 0
+#neutral if total sentiment = 0
+total_logical_sentiment  = ifelse(df_bigram_total_sentiment$sentiment < 0, "negative", ifelse(df_bigram_total_sentiment$sentiment > 0, "positive", "neutral"))
+                                                                                                  
+#replace total numeric sentiment with total logical sentiment
+df_bigram_total_sentiment = df_bigram_total_sentiment %>%
+  mutate(sentiment=total_logical_sentiment)
+
+
+## join up the bigrams again
+df_bigrams <- df_bigram_total_sentiment %>%
+  unite(bigram, word1, word2, sep = ' ')
+
+#look at negative and positive sentiment
+df_bigrams%>% select(bigram, sentiment) %>% filter(sentiment == "negative" | sentiment == "positive")
+
+####################################################
+
+```
+
+# 9. Top 20 bigrams relating to positve, negative and neutral
+
+```{r}
+# Top 20 bigrams related to negative, neutral and positive sentiments for all speeches
+##Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative")%>%
+  count(bigram, sort = TRUE) 
+
+##Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive")%>%
+  count(bigram, sort = TRUE) 
+
+##Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral")%>%
+  count(bigram, sort = TRUE) 
+
+```
+
+# 9. Top 20 bigrams related to negative, neutral and positive sentiment for each president
+
+```{r}
+#################################################################################
+
+# Top 20 bigrams related to negative, neutral and positive sentiments for each president
+
+####################negative
+
+##Mandela: Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative" & president_13 == "Mandela")%>%
+  count(bigram, sort = TRUE)
+
+##Mbeki: Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative" & president_13 == "Mbeki")%>%
+  count(bigram, sort = TRUE) 
+
+##Ramaphosa: Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative" & president_13 == "Ramaphosa")%>%
+  count(bigram, sort = TRUE) 
+
+##Zuma: Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative" & president_13 == "Zuma")%>%
+  count(bigram, sort = TRUE) 
+
+##deKlerk: Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative" & president_13 == "deKlerk")%>%
+  count(bigram, sort = TRUE) 
+
+##Motanthe: Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative" & president_13 == "Motlanthe")%>%
+  count(bigram, sort = TRUE) 
+
+
+####################positive
+
+##Mandela: Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive" & president_13 == "Mandela")%>%
+  count(bigram, sort = TRUE) 
+
+##Mbeki: Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive" & president_13 == "Mbeki")%>%
+  count(bigram, sort = TRUE) 
+
+##Ramaphosa: Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive" & president_13 == "Ramaphosa")%>%
+  count(bigram, sort = TRUE) 
+
+##Zuma: Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive" & president_13 == "Zuma")%>%
+  count(bigram, sort = TRUE)
+
+##deKlerk: Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive" & president_13 == "deKlerk")%>%
+  count(bigram, sort = TRUE)
+
+##Motanthe: Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive" & president_13 == "Motlanthe")%>%
+  count(bigram, sort = TRUE)
+
+####################neutral
+
+##Mandela: Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Mandela")%>%
+  count(bigram, sort = TRUE)
+
+##Mbeki: Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Mbeki")%>%
+  count(bigram, sort = TRUE) 
+
+##Ramaphosa: Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Ramaphosa")%>%
+  count(bigram, sort = TRUE)
+
+##Zuma: Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Zuma")%>%
+  count(bigram, sort = TRUE)
+
+##deKlerk: Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral" & president_13 == "deKlerk")%>%
+  count(bigram, sort = TRUE)
+
+##Motanthe: Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Motlanthe")%>%
+  count(bigram, sort = TRUE)
+
+```
+
+
+#10. Top 20 bigrams related to negative, positive and neutral sentiments across all years for all speeches and presidents
+
+```{r}
+
+##Top 20 bigrams related to negative sentiments
+df_bigrams %>% filter(sentiment == "negative")%>%
+  count(bigram, sort = TRUE) %>%
+  filter(rank(desc(n)) <= 20)%>%
   arrange(desc(n)) %>%
-  filter(rank(desc(n)) <= 20) %>%
-  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
-  ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
+  filter(rank(desc(n)) <= 20)%>%
+  ggplot(aes(reorder(bigram,n),n)) + geom_col() + coord_flip() + xlab('')
+
+
+##Top 20 bigrams related to positive sentiments
+df_bigrams %>% filter(sentiment == "positive")%>%
+  count(bigram, sort = TRUE) %>%
+  filter(rank(desc(n)) <= 20)%>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20)%>%
+  ggplot(aes(reorder(bigram,n),n)) + geom_col() + coord_flip() + xlab('')
+
+##Top 20 bigrams related to neutral sentiments
+df_bigrams %>% filter(sentiment == "neutral")%>%
+  count(bigram, sort = TRUE) %>%
+  filter(rank(desc(n)) <= 20)%>%
+  arrange(desc(n)) %>%
+  filter(rank(desc(n)) <= 20)%>%
+  ggplot(aes(reorder(bigram,n),n)) + geom_col() + coord_flip() + xlab('')
+
 ```
 
-```{r Top negative words}
-speech_data_sentiment %>% filter(value< 0 & president_13=="Mandela" ) %>%
-  count(word) %>%
-  arrange(desc(n)) %>%
-  filter(rank(desc(n)) <= 20) %>%
-  ggplot(aes(reorder(word,n),n)) + geom_col() + coord_flip() + xlab('')+
-  ggtitle("Mandela")+theme(plot.title = element_text(hjust=0.5))
+
+# 11. Changes in sentiment over time from 1994 to 2023
+
+```{r}
+
+#get frequency of sentiment class for each year
+sentiments_per_year <- df_bigrams %>%
+  group_by(year, sentiment) %>%
+  summarize(n = n()) 
+
+##################
+
+#plot changes in sentiment from 1994 to 2022
+ggplot(filter(sentiments_per_year, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle(label="Sentiment analysis over time:", 
+          subtitle="Overal change in sentiment for years 1994 to 2022")
+
+
+##################
+
+#plot changes in sentiment for Mandela
+
+##get frequency of sentiment class for each year while Mandela was the president
+sentiments_per_year_Mandela <- df_bigrams %>%
+  filter(president_13 == "Mandela")%>%
+  group_by(year, sentiment) %>%
+  summarize(n = n()) 
+
+ggplot(filter(sentiments_per_year_Mandela, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle(label="Changes in sentiment for former president Mandela:", 
+          subtitle="Overal change in sentiment for years 1994 to 1999")
+
+##################
+
+#plot changes in sentiment for Mbeki
+
+##get frequency of sentiment class for each year while Mbeki was the president
+sentiments_per_year_Mbeki <- df_bigrams %>%
+  filter(president_13 == "Mbeki")%>%
+  group_by(year, sentiment) %>%
+  summarize(n = n()) 
+
+ggplot(filter(sentiments_per_year_Mbeki, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle(label="Changes in sentiment for former president Mbeki:", 
+          subtitle="Overal change in sentiment for years 2000 to 2008")
+
+
+
+##################
+
+#plot changes in sentiment for Zuma
+
+##get frequency of sentiment class for each year while Zuma was the president
+sentiments_per_year_Zuma <- df_bigrams %>%
+  filter(president_13 == "Zuma")%>%
+  group_by(year, sentiment) %>%
+  summarize(n = n()) 
+
+ggplot(filter(sentiments_per_year_Zuma, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle(label="Changes in sentiment for former president Zuma:", 
+          subtitle="Overal change in sentiment for years 2009 to 2017")
+
+
+##################
+
+#plot changes in sentiment for Rhamaphosa
+
+##get frequency of sentiment class for each year while Rhamaphosa was the president
+sentiments_per_year_Ramaphosa <- df_bigrams %>%
+  filter(president_13 == "Ramaphosa") %>%
+  group_by(year, sentiment) %>%
+  summarize(n = n()) 
+
+ggplot(filter(sentiments_per_year_Ramaphosa, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle(label="Changes in sentiment for former president Ramaphosa:", 
+          subtitle="Overal change in sentiment for years 2018 to 2023")
+
 ```
+
+
+# 12. Proportion of sentiment per year
+
+```{r}
+
+#proportion of sentiment per year
+sentiments_per_year <- sentiments_per_year %>% 
+  left_join(sentiments_per_year %>% 
+              group_by(year) %>% 
+              summarise(total = sum(n))) %>%
+  mutate(freq = n/total) 
+
+#plot proportion of sentiment per year
+plot(freq ~ year, #positive sentiment
+     sentiments_per_year[sentiments_per_year$sentiment=="positive", ], 
+     type="l", lwd=2, col="green", ylim=c(min(sentiments_per_year$freq), max(sentiments_per_year$freq)), xaxt = "n")
+lines(freq ~ year, #negative sentiment
+     sentiments_per_year[sentiments_per_year$sentiment=="negative", ], 
+     type="l", lwd=2, col="red")
+legend("topright", legend=c("Positive", "Negative"), col=c("green", "red"), #legend
+       lwd=c(2, 2))
+ticks <- 1994:2023 #customized ticks
+axis(side = 1, at = ticks, las=2) #adjust ticks
+
+```
+
+
+# 13. Binomial GLM to check the proportion of negative words that has increased over time
+
+```{r}
+#GLM
+model_glm <- glm(freq ~ year, data = subset(sentiments_per_year, sentiment == 'negative'), family = binomial())
+
+# Summary of the GLM
+summary(model_glm)
+
+```
+
+# B. LDA Topic modelling
+
+## 1 LDA Topic modelling for all presidents
+
+```{r}
+# 
+# #tokenize speeches to unigrams
+# sona_word_tokens <- sona %>%
+#   unnest_tokens(word, speech, token = "words")
+# 
+# #remove punctuation
+# sona_word_tokens <- sona_word_tokens %>% 
+#   mutate(word= str_replace_all(word, "[[:punct:]]", ""))%>% #remove punctuation
+#   mutate(word= str_replace_all(word, "\\d", ""))%>% #remove numeric characters
+#   filter(!word %in% stop_words$word, str_detect(word, '[A-Za-z]')) #remove stop words and ensure word is alphanumeric with length 1 or more characters
+  
+
+##############################################################################
+
+#LDA Topic Modelling for all presidents
+
+library(topicmodels)
+
+#frequency of each bigram in each document
+sona_tdf <- df_bigrams %>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona <- sona_tdf %>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda <- LDA(dtm_sona, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda)
+
+#beta-bigram topic probabilities
+sona_topics <- tidy(sona_lda, matrix = 'beta')
+head(sona_topics)
+
+#Plot top 20 terms used in each topic
+sona_topics %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+###############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+```
+
+## 2.  LDA Topic modelling for each president
+
+### 2.1. Mandela
+
+```{r}
+#LDA Topic Modelling for each president:
+
+###########
+
+#LDA Topic Modelling for Mandela
+
+#frequency of each bigram in each document
+sona_tdf_mandela <- df_bigrams %>%
+  filter(president_13=="Mandela")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona_mandela <- sona_tdf_mandela %>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda_mandela <- LDA(dtm_sona_mandela, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda_mandela)
+
+#beta-bigram topic probabilities
+sona_topics_mandela <- tidy(sona_lda_mandela, matrix = 'beta')
+head(sona_topics_mandela)
+
+#Plot top 20 terms used in each topic
+sona_topics_mandela %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics_mandela %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+```
+
+### 2.2. Mbeki
+
+```{r}
+#LDA Topic Modelling for Mbeki
+
+#frequency of each bigram in each document
+sona_tdf_mbeki<- df_bigrams %>%
+  filter(president_13=="Mbeki")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona_mbeki<- sona_tdf_mbeki%>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda_mbeki <- LDA(dtm_sona_mbeki, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda_mbeki)
+
+#beta-bigram topic probabilities
+sona_topics_mbeki <- tidy(sona_lda_mbeki, matrix = 'beta')
+head(sona_topics_mbeki)
+
+#Plot top 20 terms used in each topic
+sona_topics_mbeki %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics_mbeki %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+```
+
+
+### 2.3. Ramaphosa
+
+```{r}
+###########
+
+#LDA Topic Modelling for Ramaphosa
+
+#frequency of each bigram in each document
+sona_tdf_rama <- df_bigrams %>%
+  filter(president_13=="Ramaphosa")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona_rama<- sona_tdf_rama%>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda_rama <- LDA(dtm_sona_rama, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda_rama)
+
+#beta-bigram topic probabilities
+sona_topics_rama <- tidy(sona_lda_rama, matrix = 'beta')
+head(sona_topics_rama)
+
+#Plot top 20 terms used in each topic
+sona_topics_rama %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics_ramaphosa %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+###########
+```
+
+
+### 2.4. Zuma
+
+```{r}
+#LDA Topic Modelling for Zuma
+
+#frequency of each bigram in each document
+sona_tdf_zuma <- df_bigrams %>%
+  filter(president_13=="Zuma")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona_zuma <- sona_tdf_zuma%>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda_zuma <- LDA(dtm_sona_zuma, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda_zuma)
+
+#beta-bigram topic probabilities
+sona_topics_zuma <- tidy(sona_lda_zuma, matrix = 'beta')
+head(sona_topics_zuma)
+
+#Plot top 20 terms used in each topic
+sona_topics_zuma %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics_zuma %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+###########
+```
+
+
+### 2.5 Motlanthe
+
+```{r}
+#LDA Topic Modelling for Motlanthe
+
+#frequency of each bigram in each document
+sona_tdf_motlanthe <- df_bigrams %>%
+  filter(president_13=="Motlanthe")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona_motlanthe <- sona_tdf_motlanthe%>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda_motlanthe <- LDA(dtm_sona_motlanthe, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda_motlanthe)
+
+#beta-bigram topic probabilities
+sona_topics_motlanthe <- tidy(sona_lda_motlanthe, matrix = 'beta')
+head(sona_topics_motlanthe)
+
+#Plot top 20 terms used in each topic
+sona_topics_motlanthe %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics_motlanthe %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+##########
+```
+
+
+### 2.6. de Klerk
+
+```{r}
+#LDA Topic Modelling for deKlerk
+
+#frequency of each bigram in each document
+sona_tdf_deKlerk <- df_bigrams %>%
+  filter(president_13=="deKlerk")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona_deKlerk <- sona_tdf_deKlerk%>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda_deKlerk <- LDA(dtm_sona_deKlerk, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda_deKlerk)
+
+#beta-bigram topic probabilities
+sona_topics_deKlerk <- tidy(sona_lda_deKlerk, matrix = 'beta')
+head(sona_topics_deKlerk)
+
+#Plot top 20 terms used in each topic
+sona_topics_deKlerk %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics_deklerk %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+```
+
+
+## 3. LDA Topic modelling for historical years
+
+### 3.1. 1994 - Abolishment of Apartheid
+
+```{r}
+##############################################################################
+#LDA Topic Modelling for significant years
+
+###########
+#1994 - Apartheid abolished
+
+#frequency of each bigram in each document
+sona_tdf <- df_bigrams %>%
+  filter(year =="1994")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona <- sona_tdf %>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda <- LDA(dtm_sona, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda)
+
+#beta-bigram topic probabilities
+sona_topics <- tidy(sona_lda, matrix = 'beta')
+head(sona_topics)
+
+#Plot top 20 terms used in each topic
+sona_topics %>%
+  group_by(topic) %>%
+    filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+###########
+```
+
+
+### 3.2. 1996 - South African consititution adopted by assembly
+
+```{r}
+#1996 - South African consititution adopted by assembly
+
+#frequency of each bigram in each document
+sona_tdf <- df_bigrams %>%
+  filter(year =="1996")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona <- sona_tdf %>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda <- LDA(dtm_sona, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda)
+
+#beta-bigram topic probabilities
+sona_topics <- tidy(sona_lda, matrix = 'beta')
+head(sona_topics)
+
+#Plot top 20 terms used in each topic
+sona_topics %>%
+  group_by(topic) %>%
+    filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+```
+
+### 3.3. 2010 South African Soccer world cup
+
+```{r}
+# 2010 -world cup
+
+#frequency of each bigram in each document
+sona_tdf <- df_bigrams %>%
+  filter(year =="2010")%>%
+  group_by(filename,  bigram) %>%
+  count() %>%  
+  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona <- sona_tdf %>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda <- LDA(dtm_sona, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda)
+
+#beta-bigram topic probabilities
+sona_topics <- tidy(sona_lda, matrix = 'beta')
+head(sona_topics)
+
+#Plot top 20 terms used in each topic
+sona_topics %>%
+  group_by(topic) %>%
+    filter(!term %in% c("south africans", "south african", "south africas", #remove south africa root words
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+```
+
+### 3.2. 2019 - start of Covid-19 pandemic
+
+```{r}
+###########
+
+#2019 - Covid pandemic
+
+#frequency of each bigram in each document
+sona_tdf <- df_bigrams %>%
+  filter(year == "2019") %>%
+  group_by(filename,  bigram) %>%
+  count() %>%  ungroup() 
+
+#Reshape long format to wide format 
+#put data frame into the DocumentTermMatrix class 
+dtm_sona <- sona_tdf %>% 
+  cast_dtm(filename, bigram, n)
+
+#run LDA
+sona_lda <- LDA(dtm_sona, k = 2, control = list(seed = 123)) #choose different values of k to find best value of k
+str(sona_lda)
+
+#beta-bigram topic probabilities
+sona_topics <- tidy(sona_lda, matrix = 'beta')
+head(sona_topics)
+
+#Plot top 20 terms used in each topic
+sona_topics %>%
+  group_by(topic) %>%
+  filter(!term %in% c("south africans", "south african", "south africas", 
+                      "south africa", "fellow south", "madame speaker",
+                      "speaker chairperson", "madam speaker")) %>% #remove unnecessary words
+  slice_max(n = 20, order_by = beta) %>% ungroup() %>%
+  arrange(topic, -beta) %>%
+  ggplot(aes(reorder(term, beta), beta, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ topic, scales = 'free') + coord_flip()
+
+##############
+
+##  which words have the greatest difference in beta values between Topic 1 and Topic 2.
+beta_spread <- sona_topics %>%
+  mutate(topic = paste0('topic', topic)) %>%
+  pivot_wider(names_from = topic, values_from = beta) %>%
+  filter(topic1 > .001 | topic2 > .001) %>%
+  mutate(log_ratio = log2(topic2 / topic1))
+
+beta_spread %>%
+  group_by(direction = log_ratio > 0) %>%
+  top_n(10, abs(log_ratio)) %>%
+  ungroup() %>%
+  mutate(term = reorder(term, log_ratio)) %>%
+  ggplot(aes(term, log_ratio)) +
+  geom_col() +
+  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  coord_flip()
+
+```
+
+
 
