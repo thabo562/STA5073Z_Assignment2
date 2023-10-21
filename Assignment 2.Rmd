@@ -18,56 +18,44 @@ library(textdata)
 install.packages("tidytext")
 library(tidytext)
 
-#update r and install git
-install.packages("remotes")
-remotes::install_github(sprintf("rstudio/%s",
-                        c("reticulate", "tensorflow", "keras")))
-keras:: install_keras()
-library(keras)
-library(tensorflow)
-tf$constant("Hello world")
 ```
 
-```{r}
-#update r and install git
-install.packages("remotes")
-remotes::install_github(sprintf("rstudio/%s",
-                        c("reticulate", "tensorflow", "keras")))
-keras:: install_keras()
-library(keras)
-library(tensorflow)
-tf$constant("Hello world")
-```
-
+# 1. Reading in the data
 
 ```{r Reading in Data}
+
 set.seed(2022)
-load("F:/STA5073Z- DS4I/pre-processed assignment data.RData") # you can change to where you have it saved
+
+sona = readRDS("C:/Users/natal/OneDrive - University of Cape Town/UCT/Data_science_for_industry/Group_Assignment/STA5073Z_Assignment2/Natalie/preprocessed_sona.rds") # you can change to where you have it saved
+
 sona<-sona%>% mutate(speech= str_replace(speech, "\\d{1,2} [A-Za-z]+ \\d{4}", "")) # Remove dates at the start of the speech
-sona<- sona%>% mutate(speech= str_replace(speech, pattern = "^Thursday, ", replacement = ""))# remove dates on 2 remaining Ramaphosa speeches 
+
+sona<- sona%>% mutate(speech= str_replace(speech, pattern = "^Thursday, ", replacement = ""))# remove dates on 2 remaining Ramaphosa speeches
+
+#remove white spaces
 sona<- sona%>% mutate(speech= str_trim(speech, side= "left"))
 
+#tokenize to sentences
 Sona_S_tokenized<- unnest_tokens(sona, sentence, speech, token = 'sentences') 
+
+#remove punctuation 
 Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence, "[[:punct:]]", ""))
 
 ```
 
 # Data Analysis
+
 ```{r Data analyisis} 
 
 afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
-bing <- get_sentiments('bing')
-
-afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ranging from -5 to 5 
-
-
 
 ```
 
-# 3. Bigram tokenization
+# Bigram tokenization
 
 ```{r}
-# #put data into tidy format and tokenize to bigrams
+
+#put data into tidy format and tokenize to bigrams
 df_bigrams <- sona %>%
   unnest_tokens(bigram, speech, token = 'ngrams', n = 2, to_lower = T) %>%
 select(bigram, everything())
