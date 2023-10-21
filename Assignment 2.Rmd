@@ -132,7 +132,7 @@ negation_words <- c('not', 'no', 'never', 'without')
 
 #show negated bigrams
 filter(df_bigram_total_sentiment, word1 %in% negation_words) %>% 
-  head(10) %>% select(year, word1, word2, sentiment)
+  head(10) %>% select(word1, word2, sentiment, president_13, year)
   
 #convert sentiment to positive if word 1 in negation_words and sentiment = negative
 #convert sentiment to negative if word 1 in negation_words and sentiment = positive
@@ -146,407 +146,210 @@ df_bigrams <- df_bigram_total_sentiment %>%
   unite(bigram, word1, word2, sep = ' ')
 
 #remove neutral sentiment
-df_bigrams  = df_bigrams %>% select(bigram, sentiment) %>% filter(sentiment == "negative" | sentiment == "positive")
+df_bigrams  = df_bigrams %>% select(filename, bigram, sentiment, president_13, year) %>% filter(sentiment == "negative" | sentiment == "positive")
 
 ```
 
 
-# 5. Results of sentiment analysis per president
+## 4.1 Results of sentiment analysis per president
 
 ```{r}
 
 #sentiment analysis per president
 
 ## Mandela numeric sentiment
-mandela_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Mandela")
-
-## Mandela sentiment logical 
-mandela_sentiment = ifelse(mandela_sentiment$sentiment < 0, "negative", ifelse(mandela_sentiment$sentiment > 0, "positive", "neutral"))
+mandela_sentiment = df_bigrams %>% filter(president_13=="Mandela")
 
 #find majority sentiment
-table(mandela_sentiment)
+sentiment_mat = as.matrix(table(mandela_sentiment$sentiment))
+rownames(sentiment_mat)[which.max(sentiment_mat)]
 
 ###############################################################################
 
 ## Mbeki numeric sentiment
-Mbeki_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Mbeki")
-
-## Mbeki sentiment logical 
-Mbeki_sentiment = ifelse(Mbeki_sentiment$sentiment < 0, "negative", ifelse(Mbeki_sentiment$sentiment > 0, "positive", "neutral"))
+mbeki_sentiment = df_bigrams %>% filter(president_13=="Mbeki")
 
 #find majority sentiment
-table(Mbeki_sentiment)
+sentiment_mat = as.matrix(table(mbeki_sentiment$sentiment))
+rownames(sentiment_mat)[which.max(sentiment_mat)]
 
 ###############################################################################
 
 ## Ramaphosa numeric sentiment
-Ramaphosa_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Ramaphosa")
-
-## Ramaphosa sentiment logical 
-Ramaphosa_sentiment = ifelse(Ramaphosa_sentiment$sentiment < 0, "negative", ifelse(Ramaphosa_sentiment$sentiment > 0, "positive", "neutral"))
+ramaphosa_sentiment = df_bigrams %>% filter(president_13=="Ramaphosa")
 
 #find majority sentiment
-table(Ramaphosa_sentiment)
+sentiment_mat = as.matrix(table(ramaphosa_sentiment$sentiment))
+rownames(sentiment_mat)[which.max(sentiment_mat)]
 
 ###############################################################################
 
 ## Zuma numeric sentiment
-Zuma_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Zuma")
-
-## Zuma sentiment logical 
-Zuma_sentiment = ifelse(Zuma_sentiment$sentiment < 0, "negative", ifelse(Zuma_sentiment$sentiment > 0, "positive", "neutral"))
+zuma_sentiment = df_bigrams %>% filter(president_13=="Zuma")
 
 #find majority sentiment
-table(Zuma_sentiment)
+sentiment_mat = as.matrix(table(zuma_sentiment$sentiment))
+rownames(sentiment_mat)[which.max(sentiment_mat)]
 
 ###############################################################################
 
 ## deKlerk numeric sentiment
-deKlerk_sentiment = df_bigram_total_sentiment %>% filter(president_13=="deKlerk")
-
-## deKlerk sentiment logical 
-deKlerk_sentiment = ifelse(deKlerk_sentiment$sentiment < 0, "negative", ifelse(deKlerk_sentiment$sentiment > 0, "positive", "neutral"))
+deklerk_sentiment = df_bigrams %>% filter(president_13=="deKlerk")
 
 #find majority sentiment
-table(deKlerk_sentiment)
+sentiment_mat = as.matrix(table(deklerk_sentiment$sentiment))
+rownames(sentiment_mat)[which.max(sentiment_mat)]
 
 
 ###############################################################################
 
 ## Motlanthe numeric sentiment
-Motlanthe_sentiment = df_bigram_total_sentiment %>% filter(president_13=="Motlanthe")
-
-## Motlanthe sentiment logical 
-Motlanthe_sentiment = ifelse(Motlanthe_sentiment$sentiment < 0, "negative", ifelse(Motlanthe_sentiment$sentiment > 0, "positive", "neutral"))
+motlanthe_sentiment = df_bigrams %>% filter(president_13=="Motlanthe")
 
 #find majority sentiment
-table(Motlanthe_sentiment)
+sentiment_mat = as.matrix(table(motlanthe_sentiment$sentiment))
+rownames(sentiment_mat)[which.max(sentiment_mat)]
 
 ```
 
-# 6. Results of sentiment analysis per speech
+## 4.2 Results of sentiment analysis per speech
 
 ```{r}
+
 
 #file names of each unique file containing a speech
 filenames = unique(df_bigram_total_sentiment$filename)
 
-i = 1 #counter
-
-#get sentiment for each speech
+#find speeches with negative sentiment
 for (speech in filenames) {
   
-  #filter numeric sentiment by speech
-  speech_sentiment = df_bigram_total_sentiment %>% filter(filename==speech) 
+  speech_sentiment = df_bigrams %>% filter(filename == speech)
   
-  #get logical sentiment: neutral, negative or positive
-  speech_logical_sentiment = ifelse(speech_sentiment$sentiment < 0, "negative", ifelse(speech_sentiment$sentiment > 0, "positive", "neutral"))
+  #table of sentiment counts
+  sentiment_mat = as.matrix(table(speech_sentiment$sentiment))
   
-  #get frequency of sentiment
-  tbl_sentiment=table(speech_logical_sentiment)
-  
-  #print out sentiment per speech
-  print(paste0(filenames[i], "sentiment is:"))
-  print(tbl_sentiment)
-  i = i + 1 #jump to next counter
-  
+  # Check if sentiment_mat has any values
+  if (length(sentiment_mat) > 0) {
+    sentiment = rownames(sentiment_mat)[which.max(sentiment_mat)] #max sentiment
+    
+    # Check if sentiment is not null before using it in an if statement
+    if (!is.null(sentiment) && sentiment == "negative") {  
+      print(speech) #print speeches with negative sentiment
+    }
+  }
 }
 
 ```
 
-# 7. Sentiment per year
+## 4.3 Results of sentiment analysis per speech
 
 ```{r}
+
 #years
 years = unique(df_bigram_total_sentiment$year)
 
-i = 1 #counter
-
-#get sentiment for each year
-for (year in years) {
+#find yeares with negative sentiment
+for (yr in years) {
   
-  #filter numeric sentiment by year
-  year_sentiment = df_bigram_total_sentiment %>% filter(year==year) 
+  year_sentiment = df_bigrams %>% filter(year == yr)
   
-  #get logical sentiment: neutral, negative or positive
-  year_logical_sentiment = ifelse(year_sentiment$sentiment < 0, "negative", ifelse(year_sentiment$sentiment > 0, "positive", "neutral"))
+  #table of sentiment counts
+  sentiment_mat = as.matrix(table(year_sentiment$sentiment))
   
-  #get frequency of sentiment
-  tbl_sentiment=table(year_logical_sentiment)
-  
-  #print out sentiment per year
-  print(paste0(years[i], " sentiment is:"))
-  print(tbl_sentiment)
-  
-  i = i + 1 #jump to next counter
-  
+  # Check if sentiment_mat has any values
+  if (length(sentiment_mat) > 0) {
+    sentiment = rownames(sentiment_mat)[which.max(sentiment_mat)] #max sentiment
+    
+    # Check if sentiment is not null before using it in an if statement
+    if (!is.null(sentiment) && sentiment == "negative") {  
+      print(yr) #print year with negative sentiment
+    }
+  }
 }
-```
-
-
-
-# 9. Top 20 bigrams relating to positve, negative and neutral
-
-```{r}
-# Top 20 bigrams related to negative, neutral and positive sentiments for all speeches
-##Top 20 bigrams related to negative sentiments
-df_bigrams %>% filter(sentiment == "negative")%>%
-  count(bigram, sort = TRUE) 
-
-##Top 20 bigrams related to positive sentiments
-df_bigrams %>% filter(sentiment == "positive")%>%
-  count(bigram, sort = TRUE) 
-
-##Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral")%>%
-  count(bigram, sort = TRUE) 
 
 ```
 
-# 9. Top 20 bigrams related to negative, neutral and positive sentiment for each president
+## 4.4. Plot top 5 bigrams related to negative and positive sentiment for each president
 
 ```{r}
-#################################################################################
-
-# Top 20 bigrams related to negative, neutral and positive sentiments for each president
 
 ####################negative
 
-##Mandela: Top 20 bigrams related to negative sentiments
+##Mandela: Top 5 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative" & president_13 == "Mandela")%>%
   count(bigram, sort = TRUE)
 
-##Mbeki: Top 20 bigrams related to negative sentiments
+##Mbeki: Top 5 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative" & president_13 == "Mbeki")%>%
   count(bigram, sort = TRUE) 
 
-##Ramaphosa: Top 20 bigrams related to negative sentiments
+##Ramaphosa: Top 5 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative" & president_13 == "Ramaphosa")%>%
   count(bigram, sort = TRUE) 
 
-##Zuma: Top 20 bigrams related to negative sentiments
+##Zuma: Top 5 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative" & president_13 == "Zuma")%>%
   count(bigram, sort = TRUE) 
 
-##deKlerk: Top 20 bigrams related to negative sentiments
+##deKlerk: Top 5 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative" & president_13 == "deKlerk")%>%
   count(bigram, sort = TRUE) 
 
-##Motanthe: Top 20 bigrams related to negative sentiments
+##Motanthe: Top 5 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative" & president_13 == "Motlanthe")%>%
   count(bigram, sort = TRUE) 
 
 
 ####################positive
 
-##Mandela: Top 20 bigrams related to positive sentiments
+##Mandela: Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive" & president_13 == "Mandela")%>%
   count(bigram, sort = TRUE) 
 
-##Mbeki: Top 20 bigrams related to positive sentiments
+##Mbeki: Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive" & president_13 == "Mbeki")%>%
   count(bigram, sort = TRUE) 
 
-##Ramaphosa: Top 20 bigrams related to positive sentiments
+##Ramaphosa: Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive" & president_13 == "Ramaphosa")%>%
   count(bigram, sort = TRUE) 
 
-##Zuma: Top 20 bigrams related to positive sentiments
+##Zuma: Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive" & president_13 == "Zuma")%>%
   count(bigram, sort = TRUE)
 
-##deKlerk: Top 20 bigrams related to positive sentiments
+##deKlerk: Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive" & president_13 == "deKlerk")%>%
   count(bigram, sort = TRUE)
 
-##Motanthe: Top 20 bigrams related to positive sentiments
+##Motanthe: Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive" & president_13 == "Motlanthe")%>%
-  count(bigram, sort = TRUE)
-
-####################neutral
-
-##Mandela: Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Mandela")%>%
-  count(bigram, sort = TRUE)
-
-##Mbeki: Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Mbeki")%>%
-  count(bigram, sort = TRUE) 
-
-##Ramaphosa: Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Ramaphosa")%>%
-  count(bigram, sort = TRUE)
-
-##Zuma: Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Zuma")%>%
-  count(bigram, sort = TRUE)
-
-##deKlerk: Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral" & president_13 == "deKlerk")%>%
-  count(bigram, sort = TRUE)
-
-##Motanthe: Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral" & president_13 == "Motlanthe")%>%
   count(bigram, sort = TRUE)
 
 ```
 
 
-#10. Top 20 bigrams related to negative, positive and neutral sentiments across all years for all speeches and presidents
+#10. Top 5 bigrams related to negative and positive sentiments across all years and for all speeches and presidents
 
 ```{r}
 
 ##Top 20 bigrams related to negative sentiments
 df_bigrams %>% filter(sentiment == "negative")%>%
   count(bigram, sort = TRUE) %>%
-  filter(rank(desc(n)) <= 20)%>%
+  filter(rank(desc(n)) <= 5) %>%
   arrange(desc(n)) %>%
-  filter(rank(desc(n)) <= 20)%>%
-  ggplot(aes(reorder(bigram,n),n)) + geom_col() + coord_flip() + xlab('')
+  ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
+  geom_col() + coord_flip() + xlab('')
 
 
-##Top 20 bigrams related to positive sentiments
+##Top 5 bigrams related to positive sentiments
 df_bigrams %>% filter(sentiment == "positive")%>%
   count(bigram, sort = TRUE) %>%
-  filter(rank(desc(n)) <= 20)%>%
+  filter(rank(desc(n)) <= 5)%>%
   arrange(desc(n)) %>%
-  filter(rank(desc(n)) <= 20)%>%
-  ggplot(aes(reorder(bigram,n),n)) + geom_col() + coord_flip() + xlab('')
+  ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
+  geom_col() + coord_flip() + xlab('')
 
-##Top 20 bigrams related to neutral sentiments
-df_bigrams %>% filter(sentiment == "neutral")%>%
-  count(bigram, sort = TRUE) %>%
-  filter(rank(desc(n)) <= 20)%>%
-  arrange(desc(n)) %>%
-  filter(rank(desc(n)) <= 20)%>%
-  ggplot(aes(reorder(bigram,n),n)) + geom_col() + coord_flip() + xlab('')
-
-```
-
-
-# 11. Changes in sentiment over time from 1994 to 2023
-
-```{r}
-
-#get frequency of sentiment class for each year
-sentiments_per_year <- df_bigrams %>%
-  group_by(year, sentiment) %>%
-  summarize(n = n()) 
-
-##################
-
-#plot changes in sentiment from 1994 to 2022
-ggplot(filter(sentiments_per_year, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
-  geom_col() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle(label="Sentiment analysis over time:", 
-          subtitle="Overal change in sentiment for years 1994 to 2022")
-
-
-##################
-
-#plot changes in sentiment for Mandela
-
-##get frequency of sentiment class for each year while Mandela was the president
-sentiments_per_year_Mandela <- df_bigrams %>%
-  filter(president_13 == "Mandela")%>%
-  group_by(year, sentiment) %>%
-  summarize(n = n()) 
-
-ggplot(filter(sentiments_per_year_Mandela, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
-  geom_col() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle(label="Changes in sentiment for former president Mandela:", 
-          subtitle="Overal change in sentiment for years 1994 to 1999")
-
-##################
-
-#plot changes in sentiment for Mbeki
-
-##get frequency of sentiment class for each year while Mbeki was the president
-sentiments_per_year_Mbeki <- df_bigrams %>%
-  filter(president_13 == "Mbeki")%>%
-  group_by(year, sentiment) %>%
-  summarize(n = n()) 
-
-ggplot(filter(sentiments_per_year_Mbeki, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
-  geom_col() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle(label="Changes in sentiment for former president Mbeki:", 
-          subtitle="Overal change in sentiment for years 2000 to 2008")
-
-
-
-##################
-
-#plot changes in sentiment for Zuma
-
-##get frequency of sentiment class for each year while Zuma was the president
-sentiments_per_year_Zuma <- df_bigrams %>%
-  filter(president_13 == "Zuma")%>%
-  group_by(year, sentiment) %>%
-  summarize(n = n()) 
-
-ggplot(filter(sentiments_per_year_Zuma, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
-  geom_col() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle(label="Changes in sentiment for former president Zuma:", 
-          subtitle="Overal change in sentiment for years 2009 to 2017")
-
-
-##################
-
-#plot changes in sentiment for Rhamaphosa
-
-##get frequency of sentiment class for each year while Rhamaphosa was the president
-sentiments_per_year_Ramaphosa <- df_bigrams %>%
-  filter(president_13 == "Ramaphosa") %>%
-  group_by(year, sentiment) %>%
-  summarize(n = n()) 
-
-ggplot(filter(sentiments_per_year_Ramaphosa, sentiment != 'neutral'), aes(x = year, y = n, fill = sentiment)) +
-  geom_col() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle(label="Changes in sentiment for former president Ramaphosa:", 
-          subtitle="Overal change in sentiment for years 2018 to 2023")
-
-```
-
-
-# 12. Proportion of sentiment per year
-
-```{r}
-
-#proportion of sentiment per year
-sentiments_per_year <- sentiments_per_year %>% 
-  left_join(sentiments_per_year %>% 
-              group_by(year) %>% 
-              summarise(total = sum(n))) %>%
-  mutate(freq = n/total) 
-
-#plot proportion of sentiment per year
-plot(freq ~ year, #positive sentiment
-     sentiments_per_year[sentiments_per_year$sentiment=="positive", ], 
-     type="l", lwd=2, col="green", ylim=c(min(sentiments_per_year$freq), max(sentiments_per_year$freq)), xaxt = "n")
-lines(freq ~ year, #negative sentiment
-     sentiments_per_year[sentiments_per_year$sentiment=="negative", ], 
-     type="l", lwd=2, col="red")
-legend("topright", legend=c("Positive", "Negative"), col=c("green", "red"), #legend
-       lwd=c(2, 2))
-ticks <- 1994:2023 #customized ticks
-axis(side = 1, at = ticks, las=2) #adjust ticks
-
-```
-
-
-# 13. Binomial GLM to check the proportion of negative words that has increased over time
-
-```{r}
-#GLM
-model_glm <- glm(freq ~ year, data = subset(sentiments_per_year, sentiment == 'negative'), family = binomial())
-
-# Summary of the GLM
-summary(model_glm)
 
 ```
 
