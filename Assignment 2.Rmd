@@ -173,19 +173,6 @@ Ramaphosa2<-speech_data_sentiment %>% filter(value<0 & president_13=="Ramaphosa"
 grid.arrange(DeKlerk2,Mandela2, Mbeki2, Zuma2, Motlanthe2,Ramaphosa2,ncol = 2, nrow = 3)
 ```
 
-```{r Changes in sentiment over time}
-
-speech_data_tidy$date<- as.Date(speech_data_tidy$date, format = "%d-%m-%Y")
-
-
-tidy_tweets <- tidy_tweets %>% 
-  left_join(bing) %>%                              #add sentiments (pos or neg)
-  select(word, sentiment, everything()) %>%
-  mutate(sentiment = ifelse(word == 'trump', NA, sentiment)) %>%     #'trump' is a positive word in the bing lexicon!
-  mutate(sentiment = ifelse(is.na(sentiment), 'neutral', sentiment))
-
-```
-
 
 ```{r Aggregating sentiment over speeches}
 sentiments_per_speech <- speech_data_sentiment %>%
@@ -209,8 +196,11 @@ ngram_separated  <- sona %>%
   mutate(text = str_replace_all(speech, replace_reg, '')) %>%
   unnest_tokens(ngram, speech, token = 'ngrams', n = 4) %>%
   separate(ngram, c('word1', 'word2','word3','word4'), sep = ' ')%>%
-  select(-text)
+  select(-text)%>%
+   filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word & !word3 %in% stop_words$word & !word4   %in%stop_words$word) 
 
+
+  
 
 
 ```
