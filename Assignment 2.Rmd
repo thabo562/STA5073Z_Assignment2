@@ -39,11 +39,11 @@ sona<- sona%>% mutate(speech= str_trim(speech, side= "left"))
 Sona_S_tokenized<- unnest_tokens(sona, sentence, speech, token = 'sentences') 
 
 #remove punctuation 
-Sona_S_tokenized<- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence, "[[:punct:]]", ""))
+Sona_S_tokenized <- Sona_S_tokenized%>% mutate(sentence= str_replace_all(sentence, "[[:punct:]]", ""))
 
 ```
 
-# Data Analysis
+# 2. Data Analysis
 
 ```{r Data analyisis} 
 
@@ -51,22 +51,17 @@ afinn <- get_sentiments('afinn') # Lexicon of sentiments with value attached ran
 
 ```
 
-# Bigram tokenization
+# 3. Bigram tokenization
 
 ```{r}
 
-#put data into tidy format and tokenize to bigrams
-df_bigrams <- sona %>%
-  unnest_tokens(bigram, speech, token = 'ngrams', n = 2, to_lower = T) %>%
+#tokenize sentences to words
+df_bigrams <- Sona_S_tokenized %>%
+  unnest_tokens(bigram, sentence, token = 'ngrams', n = 2, to_lower = T) %>%
 select(bigram, everything())
-
-#strip all punctuation and numeric characters from each bigram
-df_stripped_bigrams = df_bigrams%>%
-  mutate(bigram= str_replace_all(bigram, "[[:punct:]]", "")) #remove punctuation
-
   
-# separate the bigrams 
-df_separated_bigrams <- df_stripped_bigrams %>%
+#separate the bigrams  into individual words
+df_separated_bigrams <- df_bigrams %>%
   separate(bigram, c('word1', 'word2'), sep = ' ')
 
 # remove stop words
@@ -79,15 +74,11 @@ df_bigrams <- df_filtered_bigrams %>%
 
 ```
 
-
-#  A. Sentiment analysis
+#  4. Sentiment analysis on bigrams using the Afinn lexicon
 
 ```{r}
-# separate the bigrams again
-df_separated_bigrams <- df_bigrams  %>%
-  separate(bigram, c('word1', 'word2'), sep = ' ')
 
-#use afinn sentiments
+#use afinn sentiments 
 ##join with sentiment data based on word1
 bigrams_word1_sentiment <- df_separated_bigrams %>%
   select(word1)%>%
@@ -101,34 +92,15 @@ bigrams_word2_sentiment <- df_separated_bigrams %>%
   rename(word2_sentiment = value)
 
 
-#remove word 1 and word 2 column from original bigrams separtaed data frame
+#remove word 1 and word 2 column from data frame
 df_separated_bigrams = df_separated_bigrams %>% select(filename, year, president_13, date)
 
-#combine sentiments for word1 and word2 into 1 dataframe
+#get NETT sentiment for each bigram and append as a column to the data frame
 bigrams_sentiment = cbind(df_separated_bigrams, bigrams_word1_sentiment , bigrams_word2_sentiment )
-
-###############################################################################
-
-#Find negation words - we find none
-#negation words
-negation_words <- c('not', 'no', 'never', 'without')
-
-# show a few
-filter(bigrams_sentiment, word1 %in% negation_words) %>% 
-  head(10) %>% select(year, word1, word2, word1_sentiment, word2_sentiment)
  
 ################################################################################
 
-## replacing NA with 0 just gives lots of neutral sentiments
-#let sentiment of word = 0 if sentiment = NA
-# bigrams_sentiment$word1_sentiment[is.na(bigrams_sentiment[, 'word1_sentiment'])] = 0 #sentiment for word 1
-# bigrams_sentiment$word2_sentiment[is.na(bigrams_sentiment[, 'word2_sentiment'])] = 0 #sentiment for word 2
-
-#remove bigrams where either word 1 or word 2 or both have sentiment == NA ---> not useful
-# bigrams_sentiment = bigrams_sentiment[!is.na(bigrams_sentiment$word1_sentiment) & !is.na(bigrams_sentiment$word2_sentiment), ]
-###############################################################################
-
-#convert na to 0
+#convert NA to 0
 bigrams_sentiment$word1_sentiment[is.na(bigrams_sentiment$word1_sentiment)] = 0 #word1
 bigrams_sentiment$word2_sentiment[is.na(bigrams_sentiment$word2_sentiment)] = 0 #word2
 
@@ -139,6 +111,42 @@ total_sentiment = rowSums(cbind(bigrams_sentiment$word1_sentiment, bigrams_senti
 df_bigram_total_sentiment = bigrams_sentiment %>% select(word1, word2, filename, year, president_13, date)%>%
   mutate(sentiment=total_sentiment)
 
+###############################################################################
+
+#negative, if nett sentiment < 0
+#positive, else if nett sentiment > 0
+#neutral if nett sentiment = 0
+
+total_logical_sentiment  = ifelse(df_bigram_total_sentiment$sentiment < 0, "negative", ifelse(df_bigram_total_sentiment$sentiment > 0, "positive", "neutral"))
+                                                                                                  
+#replace total numeric sentiment with categorical sentiment
+df_bigram_total_sentiment = df_bigram_total_sentiment %>%
+  mutate(sentiment=total_logical_sentiment)
+
+###############################################################################
+
+#Find negation words
+
+##negation words
+negation_words <- c('not', 'no', 'never', 'without')
+
+#show negated bigrams
+filter(df_bigram_total_sentiment, word1 %in% negation_words) %>% 
+  head(10) %>% select(year, word1, word2, sentiment)
+  
+#convert sentiment to positive if word 1 in negation_words and sentiment = negative
+#convert sentiment to negative if word 1 in negation_words and sentiment = positive
+#else, neutral.
+df_bigram_total_sentiment = df_bigram_total_sentiment %>%
+  mutate(sentiment = ifelse(word1 %in% negation_words & sentiment == "positive", "negative",
+                            ifelse(word1 %in% negation_words & sentiment == "negative", "positive", "neutral")))
+
+# join up the bigrams again
+df_bigrams <- df_bigram_total_sentiment %>%
+  unite(bigram, word1, word2, sep = ' ')
+
+#remove neutral sentiment
+df_bigrams  = df_bigrams %>% select(bigram, sentiment) %>% filter(sentiment == "negative" | sentiment == "positive")
 
 ```
 
@@ -276,29 +284,6 @@ for (year in years) {
 ```
 
 
-# 8. Total sentiment over all years, all speeches and across all presidents
-
-```{r}
-#negative, if total sentiment < 0
-#positive, else if total sentiment > 0
-#neutral if total sentiment = 0
-total_logical_sentiment  = ifelse(df_bigram_total_sentiment$sentiment < 0, "negative", ifelse(df_bigram_total_sentiment$sentiment > 0, "positive", "neutral"))
-                                                                                                  
-#replace total numeric sentiment with total logical sentiment
-df_bigram_total_sentiment = df_bigram_total_sentiment %>%
-  mutate(sentiment=total_logical_sentiment)
-
-
-## join up the bigrams again
-df_bigrams <- df_bigram_total_sentiment %>%
-  unite(bigram, word1, word2, sep = ' ')
-
-#look at negative and positive sentiment
-df_bigrams%>% select(bigram, sentiment) %>% filter(sentiment == "negative" | sentiment == "positive")
-
-####################################################
-
-```
 
 # 9. Top 20 bigrams relating to positve, negative and neutral
 
