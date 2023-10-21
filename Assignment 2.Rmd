@@ -192,6 +192,11 @@ ggplot(sentiments_per_speech, aes(x=date, y=net_sentiment)) +
 
 # Sentiment Analysis 
 ```{r n grams sentiment analysis}
+
+ngrams<- sona %>%
+        mutate(text = str_replace_all(speech, replace_reg, '')) %>%
+        unnest_tokens(ngram, speech, token = 'ngrams', n = 4)
+
 ngram_separated  <- sona %>%
   mutate(text = str_replace_all(speech, replace_reg, '')) %>%
   unnest_tokens(ngram, speech, token = 'ngrams', n = 4) %>%
@@ -199,10 +204,18 @@ ngram_separated  <- sona %>%
   select(-text)%>%
    filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word & !word3 %in% stop_words$word & !word4   %in%stop_words$word) 
 
-
+#use afinn sentiments 
+##join with sentiment data based on word1
+ngrams_word1_sentiment <- ngram_separated %>%
+  select(word1)%>%
+  left_join(afinn, by = c("word1" = "word")) %>%
+  rename(word1_sentiment = value)
   
 
-
+a<-ngrams %>% filter(president_13 == "deKlerk")%>%
+  group_by(ngram)%>%
+  count(ngram)%>%
+  filter(rank(n) <= 2)
 ```
 
 
