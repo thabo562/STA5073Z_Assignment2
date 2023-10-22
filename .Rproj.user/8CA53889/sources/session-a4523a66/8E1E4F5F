@@ -1,7 +1,7 @@
 {
     "id": "8E1E4F5F",
-    "path": "C:/Users/User/Desktop/MSc_Data_Science/DS4I/A2Files/A2_Sentiment_analysis.Rmd",
-    "project_path": null,
+    "path": "C:/Users/User/Desktop/MSc_Data_Science/DS4I/STA5073Z_Assignment2/A2_Sentiment_analysis.Rmd",
+    "project_path": "A2_Sentiment_analysis.Rmd",
     "type": "r_markdown",
     "hash": "0",
     "contents": "",
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "18,0",
-        "scrollLine": "0",
-        "last_setup_crc32": "a4523a66c4e2d899"
+        "cursorPosition": "444,0",
+        "scrollLine": "425",
+        "last_setup_crc32": "a4523a66ae275dcf"
     },
     "folds": "",
-    "lastKnownWriteTime": 1697954578,
+    "lastKnownWriteTime": 1697997677,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1697954578451,
+    "last_content_update": 1697997678385,
     "read_only": false,
     "read_only_alternatives": []
 }

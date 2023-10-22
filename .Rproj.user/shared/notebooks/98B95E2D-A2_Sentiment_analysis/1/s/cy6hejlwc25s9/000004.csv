@@ -1,0 +1,34 @@
+"0","#per year positive 
+trigrams_sep %>%
+  filter(net_sentiment > 0) %>%
+  group_by(year) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 10) %>%
+  ggplot(aes(reorder(trigram, n), n)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~year, scales = 'free')
+#per year positive 
+trigrams_sep %>%
+  filter(net_sentiment > 0) %>%
+  group_by(year) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 10) %>%
+  ggplot(aes(reorder(trigram, n), n)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~year, scales = 'free')
+"
+"0","# per year negative "
+"0","trigrams_sep %>%"
+"0","  filter(net_sentiment < 0) %>%"
+"0","  group_by(year) %>%"
+"0","  count(trigram, sort = TRUE) %>%"
+"0","  filter(rank(desc(n)) < 10) %>%"
+"0","  ggplot(aes(reorder(trigram, n), n)) +"
+"0","  geom_col() +"
+"0","  coord_flip() +"
+"0","  xlab('') +"
+"0","  facet_wrap(~year, scales = 'free')"

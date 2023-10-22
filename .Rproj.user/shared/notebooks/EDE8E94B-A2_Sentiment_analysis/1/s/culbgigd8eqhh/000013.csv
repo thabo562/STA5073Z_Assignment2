@@ -1,5 +1,0 @@
-"0","sentiments_per_year <- trigrams_sep %>%
-  group_by(year, net_sentiment) %>%
-  summarize(n = n())
-"
-"2","`summarise()` has grouped output by 'year'. You can override using the `.groups` argument."
