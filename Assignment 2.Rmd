@@ -69,15 +69,6 @@ speech_data_sentiment <- speech_data_tidy %>%
   group_by(president_13)
 
 
-speech_data_sentiment$value<- as.integer(speech_data_sentiment$value)
-
-speech_data_sentiment%>% filter(president_13=="Mandela")%>%
-                        ggplot( aes(x = value)) +
-  geom_histogram(binwidth = 1, fill = "blue") +
-  labs(x = "Sentiment Value", y = "Count") +
-  ggtitle("Count of Words by Sentiment Value")+
-  scale_x_continuous(labels = label_number(accuracy = 1))
-
 ```
 
 ```{r Top positive words}

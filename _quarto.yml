@@ -1,0 +1,17 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "A Quarto Website"
+  navbar:
+    left:
+        - about.qmd
+        - Assignment1.qmd
+        - references.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
