@@ -1,9 +1,9 @@
 {
     "id": "E78ED3DF",
-    "path": "C:/Users/User/Desktop/MSc_Data_Science/DS4I/A2Files/A2_groupwork_LDA_gamma.Rmd",
+    "path": "C:/Users/User/Desktop/MSc_Data_Science/DS4I/A2Files/LDA_gamma.Rmd",
     "project_path": null,
     "type": "r_markdown",
-    "hash": "1549660460",
+    "hash": "2095494069",
     "contents": "",
     "dirty": false,
     "created": 1697709779780.0,
@@ -12,16 +12,16 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "108,0",
-        "scrollLine": "95",
+        "cursorPosition": "20,23",
+        "scrollLine": "6",
         "last_setup_crc32": "a4523a66bb338d19"
     },
     "folds": "",
-    "lastKnownWriteTime": 1697949172,
+    "lastKnownWriteTime": 1697970464,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1697949172953,
+    "last_content_update": 1697970464718,
     "read_only": false,
     "read_only_alternatives": []
 }

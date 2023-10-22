@@ -1,0 +1,7 @@
+"0","sentiments_per_year_overall <- sentiments_per_year_overall %>% 
+  left_join(sentiments_per_year_overall %>% 
+              group_by(year) %>% 
+              summarise(total = sum(n))) %>%
+  mutate(freq = n/total) 
+"
+"2","Joining with `by = join_by(year)`"
