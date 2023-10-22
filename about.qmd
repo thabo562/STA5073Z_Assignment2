@@ -1,0 +1,56 @@
+---
+about:
+  template: trestles
+  image-width: 10em
+  image-shape: round
+---
+
+<style>
+.title {
+  font-size: 30px;
+  font-family: Arial, sans-serif; /* Change to a modern font */
+  text-align: center; /* Center align text */
+  color: grey;
+}
+</style>
+
+
+![](profile.jpg){height=100 fig-align="center"}
+
+##
+
+<div style="text-align:center">
+
+## Natalie Alexander, Thabo Dube, Kelly-Robyn Singh
+
+</div>
+
+Welcome to our website, where we, Thabo Dube, Kelly-Robyn Singh, and Natalie Alexander proudly present our project for our Data Science for Industry course (STA5073Z) 2023. Our primary goal was to perform a descriptive analysis on the content of the State of the Nation Address (SONA) delivered by the President of South Africa between the years 1994 to 2023. In order to achieve this goal, we performed sentiment analysis, and topic modelling to uncover the underlying themes and emotions in these speeches. [Click here to redirect to the GitHub repository](https://github.com/thabo562/STA5073Z_Assignment2)
+
+##
+<div style="text-align:center">
+
+## Author Contributions
+::: {layout-ncol=3}
+### Kelly-Robyn Singh
++ Sentiment analysis using trigrams
++ LDA topic modelling using gamma probabilities
++ Introduction
++ Conclusion
+
+### Natalie Alexander 
++ Sentiment analysis using bigrams
++ LDA topic modelling using beta probabilities
++ Literature review
++ Abstract
++ About page
+
+### Thabo Dube
++ Data cleaning and manipulation
++ Exploratory data analysis
++ Sentiment and topic analysis over time
++ GitHub repository management
+
+:::
+</div>
+
