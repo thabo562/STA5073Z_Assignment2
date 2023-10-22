@@ -1,0 +1,10 @@
+"0","# Calculate average sentiment category per speech
+sentiments_per_speech <- trigrams_sep %>%
+  group_by(filename, year, sentiment_category) %>%
+  summarise(total_words = n()) %>%
+  pivot_wider(names_from = sentiment_category, values_from = total_words, values_fill = 0) %>%
+  mutate(average_positive_sentiment = positive / (positive + negative),
+         average_negative_sentiment = negative / (positive + negative)) %>%
+  ungroup()
+"
+"2","`summarise()` has grouped output by 'filename', 'year'. You can override using the `.groups` argument."

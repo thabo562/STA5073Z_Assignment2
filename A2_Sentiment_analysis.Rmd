@@ -1,0 +1,446 @@
+---
+title: "Assignment 2"
+author: "Kelly-Robyn Singh, Natalie Alexander, Thabo Dube"
+date: "2023-10-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
+```
+
+```{r, echo=FALSE, message=FALSE, eval=TRUE}
+# load libraries and rdata
+library(dplyr)
+library(stringr)
+library(tidyr)
+library(tokenizers)
+library(tidyverse)
+library(tidytext)
+library(viridis)
+library(ggplot2)
+library(viridis)
+
+load("C:/Users/User/Desktop/MSc_Data_Science/DS4I/STA5073Z_Assignment2/sona.RData")
+load("Senti_Analysis.RData")
+```
+
+```{r}
+# removed stop words 
+# Define your replace_reg and unnest_reg
+replace_reg <- "(http.*?(\\s|.$))|(www.*?(\\s|.$))|&amp;|&lt;|&gt;"
+rnum <- "\\d+"
+unnest_reg <- "[^\\w_#@']"
+```
+
+```{r}
+# tidy dataset, removed numbers
+tidy_sona<- sona %>%
+  mutate(speech= str_trim(speech, side= "left")) %>%
+  mutate(speech = str_replace_all(speech, replace_reg, "")) %>%
+  mutate(speech=str_replace_all( speech, "[[:punct:]]", ""))%>%
+  mutate(speech = str_replace_all(speech , rnum , ""))  %>%
+  mutate(filename = sub("\\.txt$", "", filename))
+```
+
+```{r}
+# sep words into trig
+trigrams_sep <- tidy_sona %>%
+  unnest_tokens(trigram, speech, token = "ngrams", n = 3, to_lower = TRUE) %>%
+ separate(trigram, c("word1", "word2", "word3"), sep = " ")
+trigrams_sep%>%
+ filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word & !word3 %in% stop_words$word)
+```
+
+```{r}
+bing <- get_sentiments('bing') 
+# join with bing lexicon, largest range 
+trigrams_sep <- trigrams_sep %>%
+  left_join(bing , by = c(word1 = "word")) %>%
+  rename(sentiment1 = sentiment) %>%
+  mutate(sentiment1 = ifelse(is.na(sentiment1), "neutral", sentiment1)) %>%
+  
+    left_join(bing , by = c(word2 = "word")) %>%
+  rename(sentiment2 = sentiment) %>%
+  mutate(sentiment2 = ifelse(is.na(sentiment2), "neutral", sentiment2)) %>%
+  
+    left_join(bing , by = c(word3 = "word")) %>%
+  rename(sentiment3 = sentiment) %>%
+  mutate(sentiment3 = ifelse(is.na(sentiment3), "neutral", sentiment3)) %>%
+  select(date, word1, word2, word3, sentiment1, sentiment2, sentiment3, everything())
+```
+
+```{r, handling negation}
+
+negation_words <- c('not', 'no', 'never', 'without')
+  
+
+filter(trigrams_sep, word1 %in% negation_words | word2 %in% negation_words) %>%
+  head(10) %>% select(date, word1, word2, word3, sentiment1, sentiment2, sentiment3)
+
+
+### opposite meanings 
+
+trigrams_sep <- trigrams_sep %>%
+  # variable opposite to senti2
+  mutate(opp_sentiment = recode(sentiment2,
+                                 "positive"="negative", 
+                                 "negative"="positive",
+                                 "neutral"= "neutral"
+                                 )) %>%
+  # reverse senti2 is word1= negation 
+  mutate(sentiment2 = ifelse( word1 %in% negation_words, opp_sentiment, sentiment2)) %>%
+  mutate(sentiment3 = ifelse( word2 %in% negation_words, opp_sentiment, sentiment3)) %>%
+  
+  select(-opp_sentiment)
+```
+
+
+```{r}
+
+# Calculate the net sentiment for trigrams
+trigrams_sep <- trigrams_sep %>%
+  mutate(net_sentiment = case_when(
+    sentiment1 == 'positive' ~ 1,
+    sentiment1 == 'negative' ~ -1,
+    TRUE ~ 0
+  ) + case_when(
+    sentiment2 == 'positive' ~ 1,
+    sentiment2 == 'negative' ~ -1,
+    TRUE ~ 0
+  ) + case_when(
+    sentiment3 == 'positive' ~ 1,
+    sentiment3 == 'negative' ~ -1,
+    TRUE ~ 0
+  )) %>%
+  unite(trigram, word1, word2, word3, sep = ' ', remove = FALSE) 
+
+# Categorize trigrams as positive, negative, or neutral
+trigrams_sep <- trigrams_sep %>%
+  mutate(sentiment_category = case_when(
+    net_sentiment > 0 ~ "positive",
+    net_sentiment < 0 ~ "negative",
+    TRUE ~ "neutral"
+  ))
+
+```
+
+
+```{r}
+
+# Filter trigrams with a "positive" sentiment category
+top_positive_trigrams <- trigrams_sep %>%
+  filter(sentiment_category == "positive")
+
+# Get the top 10 positive trigrams
+top_10_positive_trigrams <- top_positive_trigrams %>%
+  count(trigram, sort = TRUE) %>%
+  head(10)
+
+# Print the top 10 positive trigrams
+#as_tibble(top_10_positive_trigrams)
+
+# Filter trigrams with a "positive" sentiment category
+top_positive_trigrams <- trigrams_sep %>%
+  filter(sentiment_category == "positive")
+
+# Get the top 10 positive trigrams
+top_10_positive_trigrams <- top_positive_trigrams %>%
+  count(trigram, sort = TRUE) %>%
+  head(10)
+
+# Remove the top 10 positive trigrams from the dataset
+trigrams_sep <- trigrams_sep %>%
+  anti_join(top_10_positive_trigrams, by = "trigram")
+
+```
+
+      
+
+```{r, eval=TRUE, echo=FALSE}
+## positive overall
+trigrams_sep %>%
+  filter(net_sentiment > 0) %>% # Get positive trigrams
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 10) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  labs(title = "Top 10 Positive Trigrams", caption = "Figure 1: Barplot Showing the 10 Most Frequently Used Positive Trigrams Overall") +  # Add a title and figure legend
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.position = "none")  # Remove the legend
+
+```
+
+```{r, eval=TRUE, echo=FALSE}
+## negative overall
+trigrams_sep %>%
+  filter(net_sentiment < 0) %>% # Get negative trigrams
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 20) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  labs(title = "Top 20 Negative Trigrams", caption = "Figure 2: Barplot Showing the 10 Most Frequently Used Negative Trigrams Overall") +  # Add a title and figure legend
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.position = "none")  # Remove the legend
+
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# top positive words per president 
+
+trigrams_sep %>%
+  filter(net_sentiment > 0) %>%
+  group_by(president_13) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 10) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~president_13, scales = 'free') +
+  labs(title = "Top 10 Positive Trigrams per President", caption = "Figure 3:Barplot Showing the 10 Most Frequently Used Positive Trigrams For Each President") +  # Add a title and figure legend
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.position = "none")  # Remove the legend
+
+```
+```{r, eval=TRUE, echo=FALSE}
+
+
+# top negative words per president 
+
+trigrams_sep %>%
+  filter(net_sentiment < 0) %>%
+  group_by(president_13) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 10) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~president_13, scales = 'free') +
+  labs(title = "Top 10 Negative Trigrams per President", caption = "Figure 4: Barplot Showing the 10 Most Frequently Used Negative Trigrams For Each President") +  # Add a title and figure legend
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.position = "none")  # Remove the legend
+
+
+```
+
+```{r, eval=TRUE, echo=FALSE}
+#per year positive
+trigrams_sep %>%
+  filter(net_sentiment > 0) %>%
+  group_by(year) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 5) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~year, scales = 'free') +
+  labs(title = "Top 5 Positive Trigrams per Year", caption = "Figure 5: Barplot Showing the 5 Most Frequently Used Positive Trigrams For Each Year") +  # Add a title and figure legend
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.position = "none")  # Remove the legend
+
+
+# Install and load the ggh4x package if you haven't already
+install.packages("ggh4x")
+library(ggh4x)
+
+trigrams_sep %>%
+  filter(net_sentiment > 0) %>%
+  group_by(year) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 5) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_bar(stat = "identity", show.legend = FALSE) +  # Use geom_bar() with show.legend = FALSE
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~year, scales = 'free') +
+  labs(title = "Top 5 Positive Trigrams per Year", caption = "Figure 5: Barplot Showing the 5 Most Frequently Used Positive Trigrams For Each Year")
+
+
+```
+
+```{r, eval=TRUE, echo=FALSE}
+
+# per year negative 
+trigrams_sep %>%
+  filter(net_sentiment < 0) %>%
+  group_by(year) %>%
+  count(trigram, sort = TRUE) %>%
+  filter(rank(desc(n)) < 5) %>%
+  ggplot(aes(reorder(trigram, n), n, fill = trigram)) +
+  geom_col() +
+  coord_flip() +
+  xlab('') +
+  facet_wrap(~year, scales = 'free') +
+  labs(title = "Top 5 Negative Trigrams per Year", caption = "Figure 6: Barplot Showing the 10 Most Frequently Used Negative Trigrams For Each Year") +  # Add a title and figure legend
+  scale_fill_viridis(discrete = TRUE) +
+  theme(legend.position = "none")  # Remove the legend
+```
+
+```{r, by time, echo=FALSE, eval=TRUE}
+sentiments_per_year <- trigrams_sep %>%
+  group_by(year, net_sentiment) %>%
+  summarize(n = n())
+
+ggplot(filter(sentiments_per_year, net_sentiment != '0'), aes(x = year, y = n, fill = net_sentiment)) +
+  geom_col() +
+  labs(title = "Sentiment Distribution per Year", caption = "Figure 7: Barplot Showing the Sentiment Distribution per Year")  # Add a title and figure legend
+
+```
+```{r, eval=TRUE, echo=FALSE}
+#per year
+sentiments_per_year_overall <- trigrams_sep %>%
+  group_by(year, sentiment_category) %>%
+  summarize(n = n())
+
+ggplot(filter(sentiments_per_year_overall, sentiment_category != 'neutral'), aes(x = year, y = n, fill = sentiment_category)) +
+  geom_col() +
+  labs(title = "Sentiment Distribution per Year", caption = "Figure 8: Barplot Showing the Sentiment Distribution per Year")  # Add a title and figure legend
+```
+
+
+```{r, eval=TRUE, echo=FALSE}
+#over time line graphlibrary(ggplot2)
+
+sentiments_per_year_overall <- sentiments_per_year_overall %>% 
+  left_join(sentiments_per_year_overall %>% 
+              group_by(year) %>% 
+              summarise(total = sum(n))) %>%
+  mutate(freq = n/total) 
+
+ggplot(filter(sentiments_per_year_overall, sentiment_category != "neutral"), aes(x = year, y = freq, colour = sentiment_category, group = 1)) +
+  geom_line() + 
+  geom_smooth(aes(colour = sentiment_category), method = "loess", formula = "y~x") +
+  labs(title = "Sentiment Distribution Over Time", caption = "Figure 9: Sentiment Frequency Distribution Over Time")  # Add a title and figure legend
+
+```
+
+```{r, eval=FALSE, echo=FALSE}
+#sentiments_per_president <- trigrams_sep %>%
+ # group_by(president_13, year, sentiment_category) %>%
+  #summarize(n = n()) %>%
+  #ungroup()
+
+#ggplot(filter(sentiments_per_president, sentiment_category != 'neutral'), aes(x = year, y = n, fill = sentiment_category)) +
+ # geom_col() +
+  #facet_wrap(~president_13) +
+  #labs(title = "Net Sentiment Analysis per President", x = "Year", y = "Count", caption = "Figure 10: Net Sentiment Analysis For Each President") +  # Add a title and figure legend
+  #scale_fill_manual(values = c("positive" = "blue", "negative" = "red")) +
+  #theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Plot net sentiment per president_13
+ggplot(filter(sentiments_per_president, sentiment_category != 'neutral'), aes(x = president_13, y = n, fill = sentiment_category)) +
+  geom_col(position = "dodge") +
+  labs(title = "Net Sentiment Analysis per President", x = "President", y = "Count", caption = "Figure 10: Net Sentiment Analysis for Each President") +  # Add a title and figure legend
+  scale_fill_manual(values = c("positive" = "blue", "negative" = "red")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 8))
+
+```
+
+```{r}
+#per speech
+# Group and summarize sentiment by filename
+
+# Calculate sentiment counts for trigrams in each 
+#sentiments_per_speech <- trigrams_sep %>%
+ # group_by(filename, sentiment_category) %>%
+  #count() %>%
+  #summarize(count = sum(n), year = first(year))
+
+#sentiments_per_filename <- trigrams_sep %>%
+ # group_by(filename, sentiment_category) %>%
+  #summarize(n = n()) %>%
+  #ungroup()
+
+# Calculate net sentiment for trigrams in each 
+#sentiments_per_speech <- trigrams_sep %>%
+ # group_by(filename, sentiment_category) %>%
+  #summarize(sentiment_category = sum(sentiment_category),
+   #         year = first(year)) 
+
+
+
+
+# Visualize the average sentiment per speech
+#ggplot(sentiments_per_filename, aes(x = year, y = average_positive_sentiment, fill = filename)) +
+ # geom_bar(stat = "identity", position = "stack", width = 0.7, alpha = 0.7) +
+ # geom_bar(aes(y = -average_negative_sentiment), stat = "identity", position = "stack", width = 0.7, alpha = 0.7) +
+  #labs(title = "Average Sentiment Analysis per Speech", x = "Year", y = "Average Sentiment") 
+
+
+# Plot net sentiment per filename with vertical x-axis labels
+#ggplot(filter(sentiments_per_speech, sentiment_category != 'neutral'), aes(x = filename, y = n, fill = sentiment_category)) +
+ # geom_col() +
+  #labs(title = "Net Sentiment Analysis per Speech", x = "Filename", y = "Count") +
+  #scale_fill_manual(values = c("positive" = "blue", "negative" = "red")) +
+  #theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r, eval=FALSE, echo=FALSE}
+
+# Calculate mean sentiment by filename
+mean_sentiment_per_filename <- trigrams_sep %>%
+  group_by(filename, sentiment_category) %>%
+  summarize(mean_sentiment = mean(net_sentiment)) %>%
+  ungroup()
+
+# Plot the mean sentiment per filename
+#ggplot(filter(mean_sentiment_per_filename, sentiment_category != 'neutral'), aes(x = filename, y = mean_sentiment, fill = sentiment_category)) +
+ # geom_col(position = "dodge") +
+  #labs(title = "Mean Sentiment Analysis per Filename", x = "Filename", y = "Mean Sentiment") +
+  #scale_fill_manual(values = c("positive" = "blue", "negative" = "red")) +
+  #theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+# Calculate average sentiment category per speech
+sentiments_per_speech <- trigrams_sep %>%
+  group_by(filename, year, sentiment_category) %>%
+  summarise(total_words = n()) %>%
+  pivot_wider(names_from = sentiment_category, values_from = total_words, values_fill = 0) %>%
+  mutate(average_positive_sentiment = positive / (positive + negative),
+         average_negative_sentiment = negative / (positive + negative)) %>%
+  ungroup()
+
+# Calculate average sentiment category per speech
+sentiments_per_speech <- trigrams_sep %>%
+  group_by(filename, year, sentiment_category) %>%
+  summarise(total_words = n()) %>%
+  pivot_wider(names_from = sentiment_category, values_from = total_words, values_fill = 0) %>%
+  mutate(average_positive_sentiment = positive / (positive + negative),
+         average_negative_sentiment = negative / (positive + negative)) %>%
+  ungroup()
+
+# Calculate the proportion of positive and negative sentiments per speech
+sentiments_per_speech <- sentiments_per_speech %>%
+  mutate(positive_proportion = average_positive_sentiment / (average_positive_sentiment + average_negative_sentiment),
+         negative_proportion = average_negative_sentiment / (average_positive_sentiment + average_negative_sentiment))
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Create a bar graph with proportions
+ggplot(sentiments_per_speech, aes(x = filename, y = positive_proportion)) +
+  geom_bar(stat = "identity", position = "stack", alpha = 0.7, width = 0.7, fill = "blue", color = "black") +
+  geom_bar(aes(y = negative_proportion), stat = "identity", position = "stack", alpha = 0.7, width = 0.7, fill = "red", color = "black") +
+  labs(title = "Proportions of Positive and Negative Sentiments per Speech", x = "Year", y = "Proportion", caption = "Figure 11: Barplot Showing Proportions of Positive and Negative Sentiments per Speech") +  # Add a title and figure legend
+  scale_fill_manual(values = c("blue", "red")) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +
+  theme(axis.text.x = element_text(angle = 90, size = 8))  # Rotate x-axis labels and set their size
+
+
+```
+
+```{r}
+
+# Save the current R workspace
+save.image("Senti_Analysis.RData")
+
+```
+

@@ -1,0 +1,1 @@
+{"height":247.2187886279357,"width":400.0,"size_behavior":0,"conditions":[[0,"\u001B[38;5;255m`geom_smooth()` using method = 'loess' and formula = 'y\n~ x'\u001B[39m"],[0,"\u001B[38;5;255m`geom_line()`: Each group consists of only one\nobservation.\n\u001B[36mℹ\u001B[38;5;255m Do you need to adjust the \u001B[32mgroup\u001B[38;5;255m aesthetic?\u001B[39m"]]}

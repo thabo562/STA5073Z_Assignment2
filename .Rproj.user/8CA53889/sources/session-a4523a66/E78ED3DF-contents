@@ -1,0 +1,143 @@
+---
+title: "topic modelling"
+author: "Kelly-Robyn Singh, Natalie Alexander, Thabo Dube"
+date: "2023-10-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, eval=T, echo=FALSE, message=FALSE}
+#load libraries
+library(tidyverse)
+library(tidytext)
+library(topicmodels)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(readr)
+  
+library(tm)
+  
+```
+
+```{r}
+load("C:/Users/User/Desktop/MSc_Data_Science/DS4I/STA5073Z_Assignment2/sona.RData")
+load("LDA_Gamma.RData")
+```
+
+```{r, echo=FALSE, eval=FALSE}
+
+# removing custom stop words that frequently appear 
+custom_stopwords <- c("with", "regards", "to", "and", "other", "custom", "stopwords", "you", "want", "south", "africa", "madame","speaker")
+
+# removed stop words 
+# Define your replace_reg and unnest_reg
+replace_reg <- "(http.*?(\\s|.$))|(www.*?(\\s|.$))|&amp;|&lt;|&gt;"
+rnum <- "\\d+"
+unnest_reg <- "[^\\w_#@']"
+
+
+# tidy dataset, removed numbers
+tidy_sona<- sona %>%
+  mutate(speech= str_trim(speech, side= "left")) %>%
+  mutate(speech = str_replace_all(speech, replace_reg, "")) %>%
+  mutate(speech=str_replace_all( speech, "[[:punct:]]", ""))%>%
+  mutate(speech = str_replace_all(speech , rnum , ""))  %>%
+  mutate(filename = sub("\\.txt$", "", filename))
+
+# clean and bigrams 
+  bigram_sona <- tidy_sona %>%
+   unnest_tokens(bigram, speech, token ="ngrams", n=2, to_lower = TRUE) %>%
+  separate(bigram, c("word1", "word2"), sep = " ")%>%
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%
+filter(!(word1 %in% custom_stopwords | word2 %in% custom_stopwords)) %>%
+unite(bigram, word1, word2, sep = " ")
+```
+
+```{r, eval=FALSE}
+# LDA 
+
+# tdf
+  speech_tdf <- bigram_sona %>%
+    group_by(filename, bigram) %>%
+    count() %>%
+    ungroup()
+  
+  dtm_speech <- speech_tdf %>%
+    cast_dtm(filename, bigram, n)
+  
+speech_lda <- LDA(dtm_speech, k=4, method = "Gibbs", control = list(seed=123))
+
+# Extract top words
+top_words <- get_terms(speech_lda, 6)  # Change 10 to the number of top words you want
+
+# View the top words for each topic
+top_words
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Create a data frame with your topics
+topics <- data.frame(
+  "Topic 1" = c("Local Government", "Public Service", "United Nations", "Economic Empowerment", "World Cup", "Public Sector"),
+  "Topic 2" = c("Private Sector", "Economic Growth", "Create Jobs", "Social Partners", "Law Enforcement", "National Assembly"),
+  "Topic 3" = c("Public Service", "Human Rights", "Police Service", "Local Government", "Economic Growth", "Traditional Leaders"),
+  "Topic 4" = c("Billion Rand", "Deputy President", "National Assembly", "Eastern Cape", "Honourable Chairperson", "District Municipality")
+)
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# Create a kable table with Bootstrap styling
+kable(topics, format = "html", escape = FALSE) %>%
+  kable_styling("striped", full_width = FALSE) %>%
+  kable_styling(bootstrap_options = "striped")
+```
+Table 1: Top 6 Most Frequent Terms For Each of The 4 Topics
+
+```{r, eval=FALSE}
+# convert to tidy 
+speech_lda <- tidy(speech_lda, matrix = "gamma")
+
+# convert to tibble 
+tidy_sona <- as_tibble(tidy_sona)
+
+# join the LDA topics and the sona data 
+speech_g <- speech_lda %>%
+  left_join(tidy_sona, by = c("document" = "filename")) %>%
+  spread(key = topic, value = gamma, sep = "_")
+  
+# group by filename/document 
+speech_g %>%
+  group_by(document) %>%
+  summarise(ntopic1= sum(topic_1 > 0.5 ))
+
+# group by topics 
+top_term<- speech_lda %>%
+  group_by(topic) %>%
+  top_n(10, gamma) %>%
+  ungroup(topic, -gamma)
+
+
+```
+```{r, eval=TRUE}
+# Plot the topic and respective filenames it's associated with
+top_term %>% 
+  mutate(document = reorder(document, gamma)) %>%
+  ggplot(aes(document, gamma, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +  # Use FALSE to hide the legend
+  facet_wrap(~topic, scales = "free") +
+  coord_flip() +
+  labs(
+    title = "Topic Distributions by Filename",  # Add a heading
+    x = "Document",
+    y = "Gamma Value",
+    fill = "Topic"
+  )
+```
+Figure 6: Bar-plot Showing Document-Topic Probability Distributions Over Speeches 
+
+```{r, eval=FALSE}
+save.image("LDA_Gamma.RData")
+```
