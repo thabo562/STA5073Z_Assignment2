@@ -6,14 +6,21 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-```{r, eval=FALSE}
+```{r, eval=T, echo=FALSE, message=FALSE}
 #load libraries
 library(tidyverse)
 library(tidytext)
 library(topicmodels)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(readr)
+  
+library(tm)
+  
 ```
 
 ```{r}
@@ -63,9 +70,7 @@ unite(bigram, word1, word2, sep = " ")
     cast_dtm(filename, bigram, n)
   
 speech_lda <- LDA(dtm_speech, k=4, method = "Gibbs", control = list(seed=123))
-  
-library(tm)
-  
+
 # Extract top words
 top_words <- get_terms(speech_lda, 6)  # Change 10 to the number of top words you want
 
@@ -73,11 +78,23 @@ top_words <- get_terms(speech_lda, 6)  # Change 10 to the number of top words yo
 top_words
 ```
 
-```{r, eval=TRUE}
-as_tibble(top_words)
-
+```{r, eval=TRUE, echo=FALSE}
+# Create a data frame with your topics
+topics <- data.frame(
+  "Topic 1" = c("Local Government", "Public Service", "United Nations", "Economic Empowerment", "World Cup", "Public Sector"),
+  "Topic 2" = c("Private Sector", "Economic Growth", "Create Jobs", "Social Partners", "Law Enforcement", "National Assembly"),
+  "Topic 3" = c("Public Service", "Human Rights", "Police Service", "Local Government", "Economic Growth", "Traditional Leaders"),
+  "Topic 4" = c("Billion Rand", "Deputy President", "National Assembly", "Eastern Cape", "Honourable Chairperson", "District Municipality")
+)
 ```
-Table 1: Most Frequent Terms For Each Topic 
+
+```{r, eval=TRUE, echo=FALSE}
+# Create a kable table with Bootstrap styling
+kable(topics, format = "html", escape = FALSE) %>%
+  kable_styling("striped", full_width = FALSE) %>%
+  kable_styling(bootstrap_options = "striped")
+```
+Table 1: Top 6 Most Frequent Terms For Each of The 4 Topics
 
 ```{r, eval=FALSE}
 # convert to tidy 
@@ -119,7 +136,7 @@ top_term %>%
     fill = "Topic"
   )
 ```
-Figure 6: Document-Topic Probability Distributions Over Speeches 
+Figure 6: Bar-plot Showing Document-Topic Probability Distributions Over Speeches 
 
 ```{r, eval=FALSE}
 save.image("LDA_Gamma.RData")
