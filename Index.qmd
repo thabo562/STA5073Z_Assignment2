@@ -28,29 +28,25 @@ And lastly, we aim to employ the use of an LLM such as ChatGPT to evaluate and c
 
 ## Literature Review
 
-Sentiment analysis and topic modelling are used in a variety of fields, with application in financial market prediction, business review analyses, and political science research, to name a few.
+Sentiment analysis and topic modelling are used in a variety of fields, with application in financial market prediction, business review analyses, and political science research.
 
-Bhardwaj et al. (2015)describes a system in which sentiment analysis is applied to stock indices, which act as indicators for overall stock market performance. Another paper by Rao Srivastava (2012) assessed the association between tweet sentiments and market performance, by assessing tweet and market data from 14 companies. The authors used a Naive Bayesian classifier for sentiment classification and found that the polarity of sentiments significantly influenced investment and stock prices. In addition, they found that the previous week's sentiments strongly impacted the following week's opening and closing stock prices.
+Bhardwaj et al. (2015)1 describes a system in which sentiment analysis is applied to stock indices that act as indicators for overall stock market performance. Another paper by Rao Srivastava (2012) assessed the association between tweet sentiments and market performance, by assessing tweet and market data from 14 companies. The authors used a Naïve Bayesian classifier and found that the polarity of sentiments significantly influenced investment opportunities.
 
-Manufacturers and companies may also benefit from sentiment analysis by assessing customer preferences and seasonal, market trends. These organizations can perform sentiment analysis on customer review data with the aim of improving product- or service quality. Singla et al. (2017) performed sentiment analysis on Amazon phone review data by assessing the negative and positive polarity in customer responses, with sentiments such as anger, anticipation, joy, and disgust, to name a few. The authors developed a support vector machine (SVM) model for sentiment classification and found that most customers preferred Samsung phones.
+Businesses may also benefit from sentiment analysis by assessing customer preferences and market trends. These organizations perform sentiment analysis on customer review data with the aim of improving product- or service quality. Singla et al. (2017) performed sentiment analysis on Amazon phone review data. The authors developed a support vector machine (SVM) model for sentiment classification and found that most customers preferred Samsung phones.
 
-Sentiment analysis has also been used in political science research, where these studies usually use data obtained from social media sites, in addition to various news platforms. Singh et al. (2017) proposed a method to assess people's opinions and biases towards demonetization, an experiment particularly relevant in India, where the government demonetized ₹500 and ₹1000 banknotes. The authors used a lexicon-based approach, namely Valence Aware Dictionary and Sentiment Reasoner (VADER) for sentiment analysis of tweet data.
+Sentiment analysis has also been used in political science research, where these studies use data obtained from social media sites. Singh et al. (2017) proposed a method to assess public opinion on demonetization, an experiment particularly relevant in India, where the government demonetized some banknotes.
 
-In the past, public opinions were usually collected using interviews and surveys, however, in the modern era of social media, there is a multitude of shared opinions expressed on online platforms such as Twitter and Facebook. Researchers are now interested in how news media can outline a campaign or a public figure (such as a politician) and how this affects public opinion. In contrast, researchers are also interested in how social media platforms and public opinions can influence news agenda.
+In the past, public opinion was collected using interviews and surveys, however, in the modern era of social media, there is a multitude of shared opinions expressed on online platforms such as Twitter. Researchers are now interested in how news media can outline a campaign or a public figure and how this affects public opinion.
 
-Researchers often perform sentiment analysis and topic modelling in tandem to discern public sentiment as well as recurring themes and topics (Guo et al., 2016).
+Researchers often perform sentiment analysis and topic modelling in tandem to discern public sentiment, as well as recurring topics (Guo et al., 2016).
 
-Topic modelling, as we've discussed before, is an unsupervised machine learning technique that uncovers abstract 'topics' within a document or a collection of documents. These 'topics' are characterized by their related words. The approach views each document as an unordered "bag of words", with words appearing at varying frequencies within or across documents. The model then calculates the weights of topics in the document based on the frequency of words related to those topics. By examining these topic weights, we can identify the main idea or theme of the document.
+Topic modelling is an unsupervised machine learning technique that uncovers abstract 'topics' within a (collection of) document(s). This approach views each document as an unordered "bag of words", with words appearing at varying frequencies. The model then calculates the topical weights in the document based on the frequency of words related to those topics. We can then identify the central theme of the document.
 
-The most widely used topic model is Latent Dirichlet Allocation (LDA; [Blei, Ng, & Jordan, 2003](https://journals.sagepub.com/doi/full/10.1177/1077699016639231?casa_token=AqG6yoJ0bO4AAAAA%3AXRI38ZwQ96TiSF7EYwbSaq5xnH79pGqIlKTAbxOyMU80bK7ZFmRj1HkwHGBMPiQfbYqEwzWUYJwm2-M#bibr4-1077699016639231)). The LDA model assumes that the proportion of topics in a document are sampled from a Dirichlet distribution. In contrast, other "bag-of-words" related topic models assume different distributions such as the log-normal distribution in the Correlated Topic Model ([Blei & Lafferty, 2006](https://journals.sagepub.com/doi/full/10.1177/1077699016639231?casa_token=AqG6yoJ0bO4AAAAA%3AXRI38ZwQ96TiSF7EYwbSaq5xnH79pGqIlKTAbxOyMU80bK7ZFmRj1HkwHGBMPiQfbYqEwzWUYJwm2-M#bibr3-1077699016639231)).
+The most widely used topic model is Latent Dirichlet Allocation (LDA) which assumes that the proportion of topics in a document is sampled from a Dirichlet distribution (LDA; Blei, Ng, & Jordan, 2003).
 
-LDA models are usually applied to research that uses well-constructed text documents such as newspaper- and academic journal- articles that are peer-reviewed, edited, and proof-checked for grammatical- and spelling- errors. In contrast, LDA models may not be as effective in the topic analysis of social media data ([Hong & Davison, 2010](https://journals.sagepub.com/doi/full/10.1177/1077699016639231?casa_token=AqG6yoJ0bO4AAAAA%3AXRI38ZwQ96TiSF7EYwbSaq5xnH79pGqIlKTAbxOyMU80bK7ZFmRj1HkwHGBMPiQfbYqEwzWUYJwm2-M#bibr11-1077699016639231); [Tang, Zhang, & Mei, 2013](https://journals.sagepub.com/doi/full/10.1177/1077699016639231?casa_token=AqG6yoJ0bO4AAAAA%3AXRI38ZwQ96TiSF7EYwbSaq5xnH79pGqIlKTAbxOyMU80bK7ZFmRj1HkwHGBMPiQfbYqEwzWUYJwm2-M#bibr36-1077699016639231)) Social media data such as tweets are usually unstructured, restricted to 14o characters, and contain abbreviations, symbols, and truncated and misspelt words, in addition to poorly formatted and grammatically incorrect sentences.
+LDA models are usually applied to research that uses well-constructed text documents such as academic journal articles. In contrast, LDA models may not be effective when using social media data (Hong & Davison, 2010; Tang, Zhang, & Mei, 2013). For example, tweets are usually unstructured, contain abbreviations and misspelt words. Despite this limitation, many researchers have used social media data due to the large volume of freely available, public sentiment.
 
-Despite this limitation in online data, many researchers have used social media data due to the large volume of freely available, public sentiment.
-
-Xie et al. (2021) assessed the public response to COVID-19 on Weibo, a Chinese microblogging website. The authors used LDA topic modelling and sentiment analysis on Weibo posts and found that public opinion shifted in response to COVID-19, where many people were able to learn about COVID-19 and express gratitude to medical professionals, while also expressing concerns about economic and life restoration. In addition, the authors found that influential individuals contributed significantly to positive, public sentiment. The authors also found recurrent themes during LDA analysis, with prominent topics such as: "Fight the virus together", "knowledge", "assistance" and "global economics".
-
-Another study by Biraj Dahal et al (2019) assessed public opinions and views on climate change, by performing sentiment analysis (using Valence Aware Dictionary sentiment Reasoner) and LDA topic modelling on Twitter data containing geotagged tweets. The researchers compared themes and moods concerning climate change across different countries. Sentiment analysis suggested that the overall debate is negative, especially when Twitter users react to political or extreme weather events. On the other hand, topic modelling suggested that there are a variety of climate change-related topics, with some topics directly related to climate change such as "carbon footprint", and "fossil fuel industry", while other topics have a more social perspective such as "humanitarian" and "international agreement". In addition, some topics suggested opposition to the climate change movement with topics such as "weather/belief". Interestingly, the authors also found that the USA is less focused on policy-related topics relative to other countries. The USA had a more negative sentiment towards climate change and had topics such as "politics/hoax" as central themes.
+A study by Biraj Dahal et al (2019) assessed public opinion on climate change, by performing sentiment analysis and LDA on geotagged tweets. The researchers compared themes and sentiment concerning climate change between different countries. Sentiment analysis suggested that the overall debate is negative, especially when Twitter users react to political news. On the other hand, topic modelling suggested polarity in topics, with topics such as "carbon footprint" and "weather/belief". The authors also found that the USA had a negative sentiment towards climate change, with topics such as "politics/hoax" as central themes.
 
 ## Exploratory Data Analysis
 
@@ -144,36 +140,35 @@ ggplot(sentiments_per_speech, aes(x=date, y=net_sentiment)) +
 
 ```
 
-The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki\'s general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively
+The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki's general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively
 
 ## Methods
 
 ### Sentiment Analysis
 
-#### N-gram Tokenisation 
+#### N-gram Tokenisation
 
-The sentence tokens previously generated, were then tokenized into bigrams, whilst ensuring all bigrams are in lowercase to reduce bigram redundancy, e.g., (\"citizens of\" vs \"Citizens of\"). Subsequently, each bigram was separated into its constituent words so that stop words could be removed. In cases where either word or both words within a bigram contained a stop word, the entire bigram was removed. The same procedure was repeated, to separate words into
-trigrams.
+The sentence tokens previously generated, were then tokenized into bigrams, whilst ensuring all bigrams are in lowercase to reduce bigram redundancy, e.g., ("citizens of" vs "Citizens of"). Subsequently, each bigram was separated into its constituent words so that stop words could be removed. In cases where either word or both words within a bigram contained a stop word, the entire bigram was removed. The same procedure was repeated, to separate words into trigrams.
 
 #### Sentiment analysis on bigrams using the AFINN lexicon
 
 The AFINN lexicon is a list of English terms manually rated for valence with an integer between -5 (negative) and +5 (positive) by Finn Årup Nielsen between 2009 and 2011. The AFINN lexicon was used to find the sentiment of each word within a bigram, by assigning a numeric value from -5 to +5 to each word within the bigram. Words within a bigram that do not appear in the AFINN lexicon, received a sentiment value of 0, as to avoid the placement of NA values. The net sentiment for each bigram was then calculated by adding the sentiment values for each of the words within a bigram. Bigrams with a net sentiment value \> 0, were classified as having positive sentiment, whereas bigrams with a net sentiment value \< 0, where classified as having a negative sentiment, and bigrams with a NETT sentiment value of 0 were classified as having a neutral sentiment.
 
-The Bing Lexicon was then utilized to associate sentiments to the individual words of the trigram tokenization output. Bing labels consist of \"positive\", \"negative\" and \"neutral\". The code performs left joins for each word in the trigram to capture the sentiment of each word. The resulting dataset was then organized to include sentiment labels for each word in the trigram to facilitate sentiment analysis for downstream analysis.
+The Bing Lexicon was then utilized to associate sentiments to the individual words of the trigram tokenization output. Bing labels consist of "positive", "negative" and "neutral". The code performs left joins for each word in the trigram to capture the sentiment of each word. The resulting dataset was then organized to include sentiment labels for each word in the trigram to facilitate sentiment analysis for downstream analysis.
 
 #### Negated Words
 
-Negated bigrams were identified, where the first word of the bigram is a negative word such as \"not\", \"no, \"never\" and \"without\". In these cases, if the negated bigram\'s sentiment was positive, we changed the sentiment to negative and vice versa. The sentiment remained the same for all other cases.
+Negated bigrams were identified, where the first word of the bigram is a negative word such as "not", "no, "never" and "without". In these cases, if the negated bigram's sentiment was positive, we changed the sentiment to negative and vice versa. The sentiment remained the same for all other cases.
 
 #### Neutral Bigrams
 
-Bigrams with neutral sentiment were removed since these bigrams can be misconstrued in instances where the word(s) did not appear in the AFFIN lexicon and so were assigned 0 sentiment scores. For the Bing lexicon, in cases where there was no sentiment label matched in the Bing lexicon, a \"neutral\" label was assigned.
+Bigrams with neutral sentiment were removed since these bigrams can be misconstrued in instances where the word(s) did not appear in the AFFIN lexicon and so were assigned 0 sentiment scores. For the Bing lexicon, in cases where there was no sentiment label matched in the Bing lexicon, a "neutral" label was assigned.
 
 #### Assessing Sentiment
 
 The overall sentiment per president was determined by finding the class, either positive or negative, with the greatest number of bigrams assigned to that class. This also gives us an overview of the overall sentiment across all presidents. In addition, the sentiment per speech was assessed to find outlier speeches with negative sentiment. Finally, we also assessed the sentiment per year.
 
-The trigrams were then categorized into \"positive\", \"negative\" or \"neutral\" based on their net sentiment scores calculated by evaluating the balance of positive and negative words. The sentiment analysis was then visualized over multiple levels such as, for each president, each year, over time, by year and president and per speech.
+The trigrams were then categorized into "positive", "negative" or "neutral" based on their net sentiment scores calculated by evaluating the balance of positive and negative words. The sentiment analysis was then visualized over multiple levels such as, for each president, each year, over time, by year and president and per speech.
 
 ### LDA Topic Modelling
 
@@ -187,7 +182,7 @@ It is important to note that only bigrams in either topic 1 or 2 with beta value
 
 Next the document-topic probabilities were extracted. To accomplish this task, LDA was performed as above with the only differences being that the k was set to 4. The most significant terms were extracted based on their gamma values. In order to allow for further analyses, the output was organized into tidy format, and the speech data into a tibble. LDA topics and text data was integrated by linking topics and speeches via their filenames. Subsequent analysis involved determination of highly relevant topics to each speech and identifying top terms for each topic.
 
-## Results 
+## Results
 
 ### Sentiment Analysis using Bigrams and Trigrams
 
@@ -796,7 +791,7 @@ trigrams_sep %>%
 
 ```
 
-### LDA Topic Analysis Using Bigrams 
+### LDA Topic Analysis Using Bigrams
 
 The figure below shows the results of topic analysis using beta probabilities (bigram-topic probabilities), where the beta probability represents the probability that a bigram belongs to a certain topic. See discussion for further interpretation.
 
@@ -1319,23 +1314,23 @@ top_term %>%
   )
 ```
 
-## Discussion 
+## Discussion
 
-### Sentiment Analysis for Bigrams 
+### Sentiment Analysis for Bigrams
 
-In @fig-Pos_Neg_Bigrams-1 and @fig-Pos_Neg_Bigrams-2 we see that DeKlerk\'s top 5 bigrams with negative sentiment are about hopelessness and boycotting, possibly in relation to the end of the Apartheid regime. Mandela and Mbeki\'s top 5 bigrams with negative sentiment are mainly about challenges, such as crime and poverty. We see that Motlanthe\'s top 5 bigrams with negative sentiment is also focused on poverty, but now special attention is given to criminal justice. Zuma\'s top 5 bigrams with negative sentiment is also about finances, but also pays attention to violence. Ramaphosa\'s top 5 bigrams with negative sentiment is focused on (gender based) violence.
+In @fig-Pos_Neg_Bigrams-1 and @fig-Pos_Neg_Bigrams-2 we see that DeKlerk's top 5 bigrams with negative sentiment are about hopelessness and boycotting, possibly in relation to the end of the Apartheid regime. Mandela and Mbeki's top 5 bigrams with negative sentiment are mainly about challenges, such as crime and poverty. We see that Motlanthe's top 5 bigrams with negative sentiment is also focused on poverty, but now special attention is given to criminal justice. Zuma's top 5 bigrams with negative sentiment is also about finances, but also pays attention to violence. Ramaphosa's top 5 bigrams with negative sentiment is focused on (gender based) violence.
 
-President deKlerk\'s top 5 bigrams with positive sentiment looks towards freedom and peace, which again points to the end of Apartheid. All other president\'s top 5 bigrams with positive sentiment have undertones of hope and improvement.
+President deKlerk's top 5 bigrams with positive sentiment looks towards freedom and peace, which again points to the end of Apartheid. All other president's top 5 bigrams with positive sentiment have undertones of hope and improvement.
 
 Albeit a common trend of poverty and crime post-Apartheid, we see that the general sentiment is positive across all presidents, in @fig-Top_bigrams which is reinforced by were the frequency of positive sentiment far surpasses that of the negative sentiment.
 
-### Sentiment Analysis for trigrams 
+### Sentiment Analysis for trigrams
 
-The results of the trigram split expresses very similar insights to the bigram split. Referring to @fig-Pos_Trigrams we note that De Klerk and Mandela echoed very similar positive remarks regarding peace, reconciliation and freedom at the time due to the abolishment of the apartheid regime and welcoming of the freedom alliance. Mbeki follows with discussions of black economic empowerment, showing the developments in concerns during the countries plight for equality. Motlanthe\'s sentiment analysis was not insightful, this is likely since his presidency lasted 8 months. Zuma frequently mentioned the public works programme, which he was launching in 2014 and Ramaphosa also mentioned the African Continental Free Trade Area (ACFTA), echoing his support for collaboration with other African nations (Obeng-Odoom, 2020).
+The results of the trigram split expresses very similar insights to the bigram split. Referring to @fig-Pos_Trigrams we note that De Klerk and Mandela echoed very similar positive remarks regarding peace, reconciliation and freedom at the time due to the abolishment of the apartheid regime and welcoming of the freedom alliance. Mbeki follows with discussions of black economic empowerment, showing the developments in concerns during the countries plight for equality. Motlanthe's sentiment analysis was not insightful, this is likely since his presidency lasted 8 months. Zuma frequently mentioned the public works programme, which he was launching in 2014 and Ramaphosa also mentioned the African Continental Free Trade Area (ACFTA), echoing his support for collaboration with other African nations (Obeng-Odoom, 2020).
 
-@fig-Neg_Trigrams depicts De Klerk\'s negative sentiments are insightful into the public opinion at this time, he mostly spoke about concerns and boycotting, likely trying to placate the public\'s concerns over the transition and trying to discourage boycotting of elections. All subsequent presidents had emphasized concerns over crime, violence, and poverty with Zuma and Ramaphosa sharing concerns about corruption. This implies a timeline of when issues surrounding corruption were becoming concerning. Additionally, Ramaphosa mentions the state of disaster, in context of the COVID-19 pandemic (Arndt et al., 2020), as well as the expropriation of land as he is determined to fulfil the promise of lawful land reform post-apartheid.
+@fig-Neg_Trigrams depicts De Klerk's negative sentiments are insightful into the public opinion at this time, he mostly spoke about concerns and boycotting, likely trying to placate the public's concerns over the transition and trying to discourage boycotting of elections. All subsequent presidents had emphasized concerns over crime, violence, and poverty with Zuma and Ramaphosa sharing concerns about corruption. This implies a timeline of when issues surrounding corruption were becoming concerning. Additionally, Ramaphosa mentions the state of disaster, in context of the COVID-19 pandemic (Arndt et al., 2020), as well as the expropriation of land as he is determined to fulfil the promise of lawful land reform post-apartheid.
 
-### LDA Topic analysis using Bigrams 
+### LDA Topic analysis using Bigrams
 
 As we can see in @fig-LDA_All , the bigrams with high beta probabilities are prevalent in both topics and so there is not much discrimination between the two topics. However, if we look at the tails of both bar plots, we see some differences. Topic 1 has themes of unity, improvement, and new opportunities possibly in relation to nation building, while topic 2 has themes of freedom, strength, opposition and justice possibly in relation to the crime, poverty and social injustice.
 
@@ -1347,7 +1342,7 @@ For the document-topic probabilities, we see that most presidents had a relative
 
 Overall, we see a mostly discrete delineation of themes between Zuma, Ramaphosa, Mandela and Mbeki. De Klerk and Motlanthe shared themes with other presidents likely due to having given a disproportionate number of speeches compared to other presidents.
 
-## Conclusion 
+## Conclusion
 
 This analysis provides valuable insights into the sentiments and themes of presidential speeches in the post-apartheid South African landscape. It outlines the optimism and hope for the new nation as well as the struggles and challenges faced. Each president brings unique insights and goals for the nation and there is demonstration of the timeline of interests over various social and historical events.
 

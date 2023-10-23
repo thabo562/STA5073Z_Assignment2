@@ -23,5 +23,3 @@ title: "References"
 -   Singla Z, Randhawa S, Jain S (2017) Statistical and sentiment analysis of consumer product reviews. In: 8th International conference on computing, communication and networking technologies (ICCCNT), pp 1--6
 
 -   Tang, J., Zhang, M. and Mei, Q., 2013, August. One theme in all views: modeling consensus topics in multiple contexts. In Proceedings of the 19th ACM SIGKDD international conference on Knowledge discovery and data mining (pp. 5-13).
-
--   Xie, R., Kai, S., Dickson K.W. Chiu and Wang, Y. (2021). Exploring Public Response to COVID-19 on Weibo with LDA Topic Modeling and Sentiment Analysis. Data and Information Management, \[online\] 5(1), pp.86--99. doi:https://doi.org/10.2478/dim-2020-0023.
