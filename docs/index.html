@@ -81,9 +81,9 @@ ul.task-list li input[type="checkbox"] {
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="./index.qmd" rel="" target="">
- <span class="menu-text"></span></a>
+  <li class="nav-item">
+    <a class="nav-link active" href="./Index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">STA5073Z Assignment 2</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./about.html" rel="" target="">
@@ -92,6 +92,10 @@ ul.task-list li input[type="checkbox"] {
   <li class="nav-item">
     <a class="nav-link" href="./References.html" rel="" target="">
  <span class="menu-text">References</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./LLM.html" rel="" target="">
+ <span class="menu-text">Large Language Model</span></a>
   </li>  
 </ul>
             <div class="quarto-navbar-tools ms-auto">
@@ -155,6 +159,7 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="abstract" class="level2">
 <h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>The State of the Nation Address (SONA) is an annual event in South Africa, where the President reports on the nation's socio-economic status. This project aims to conduct a descriptive analysis of SONA speeches from 1994 to 2023 by means of sentiment analysis and topic modelling. Sentiment analysis involves determining the emotional undertone behind words to gain an understanding of the attitudes, opinions, and emotions of a speaker. On the other hand, topic modelling, specifically Latent Dirichlet Allocation (LDA), is a type of statistical model used for discovering abstract topics that occur in a collection of documents. By using these methods, we find that most presidents had polarity in the sentiment of their speeches with topics such as hope, growth and empowerment vs economic crises, crime and social injustice. We also identified trends in sentiment over time that were characterised by the election cycle and revealed that sentiment in speeches is generally higher closer to election than during other annual SONAs. In addition, we find that the topics reflected the South African climate at each period of presidency.</p>
 </section>
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
@@ -339,6 +344,77 @@ ul.task-list li input[type="checkbox"] {
 </div>
 </div>
 </div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-kelly" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;1: Top terms for each topic</caption>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 21%">
+<col style="width: 24%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Topic.1</th>
+<th style="text-align: left;">Topic.2</th>
+<th style="text-align: left;">Topic.3</th>
+<th style="text-align: left;">Topic.4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Local Government</td>
+<td style="text-align: left;">Private Sector</td>
+<td style="text-align: left;">Public Service</td>
+<td style="text-align: left;">Billion Rand</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Public Service</td>
+<td style="text-align: left;">Economic Growth</td>
+<td style="text-align: left;">Human Rights</td>
+<td style="text-align: left;">Deputy President</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">United Nations</td>
+<td style="text-align: left;">Create Jobs</td>
+<td style="text-align: left;">Police Service</td>
+<td style="text-align: left;">National Assembly</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Economic Empowerment</td>
+<td style="text-align: left;">Social Partners</td>
+<td style="text-align: left;">Local Government</td>
+<td style="text-align: left;">Eastern Cape</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">World Cup</td>
+<td style="text-align: left;">Law Enforcement</td>
+<td style="text-align: left;">Economic Growth</td>
+<td style="text-align: left;">Honourable Chairperson</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Public Sector</td>
+<td style="text-align: left;">National Assembly</td>
+<td style="text-align: left;">Traditional Leaders</td>
+<td style="text-align: left;">District Municipality</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-Topic_Dist" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Index_files/figure-html/fig-Topic_Dist-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;11: Topic Distribution by Speech</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="discussion" class="level2">
@@ -359,7 +435,7 @@ ul.task-list li input[type="checkbox"] {
 <p>As we can see in <a href="#fig-LDA_All">Figure&nbsp;9</a> , the bigrams with high beta probabilities are prevalent in both topics and so there is not much discrimination between the two topics. However, if we look at the tails of both bar plots, we see some differences. Topic 1 has themes of unity, improvement, and new opportunities possibly in relation to nation building, while topic 2 has themes of freedom, strength, opposition and justice possibly in relation to the crime, poverty and social injustice.</p>
 <p>The log2(topic 1/topic 2) plots above in <a href="#fig-LDA_per_prez">Figure&nbsp;10</a> shows the bigrams with the greatest difference between the two topics. In the deKlerk, Mandela, Mbeki and Ramaphosa plots, we see a divide where topic 1 (red) is mostly about social injustice, (political) violence and unemployment or economic crises, while topic 2 (green) is hopeful, with topics such as freedom, peace and triumph. Distinction between the topics are not possible for Motlanthe, possibly due to the fact that only 1 speech is available for this class. We see that Zuma is also an outlier with one theme mainly focused on negative sentiment such as (political) crime, social injustice and poverty.</p>
 <p>This analysis shows that most presidential speeches have polarity, with positive sentiment touching on topics such as freedom, hope and peace, in contrast to negative sentiment touching on topics of crime, social injustices and poverty.</p>
-<p>For the document-topic probabilities, we see that most presidents had a relatively stable set of interests and themes in their speeches. Table 1 contains the top terms for each topic, we can infer that topic 1 relates international relations such as the world cup and United Nations, additionally the local community. Topic 2 revolves around economic growth, topic 3 is focused on public services and humanitarian themes and topic 4 seemingly involves government expenditures and regional government. From Figure #, we see that Mbeki, Zuma and Motlanthe focused on Topic 1 which may be due to his concerns over poverty and job creation as seen from sentiment analysis and Zuma and Motlanthe as they were involved in the 2010 world cup. Ramaphosa, Zuma and Mandela appeared in topic 2, Ramaphosa shared themes of economic growth the most, likely due to the bleak financial climate during and after COVID-19. Mandela and De Klerk were most concerned with humanitarian issues due to the abolishment of the apartheid regime. Finally, Zuma was most present in topic 4, a topic surrounding government expenditure and the eastern cape. This may be due to his frequent expression of concern over corruption.</p>
+<p>For the document-topic probabilities, we see that most presidents had a relatively stable set of interests and themes in their speeches. <a href="#tbl-kelly">Table&nbsp;1</a> contains the top terms for each topic, we can infer that topic 1 relates international relations such as the world cup and United Nations, additionally the local community. Topic 2 revolves around economic growth, topic 3 is focused on public services and humanitarian themes and topic 4 seemingly involves government expenditures and regional government. From <a href="#fig-Topic_Dist">Figure&nbsp;11</a>, we see that Mbeki, Zuma and Motlanthe focused on Topic 1 which may be due to his concerns over poverty and job creation as seen from sentiment analysis and Zuma and Motlanthe as they were involved in the 2010 world cup. Ramaphosa, Zuma and Mandela appeared in topic 2, Ramaphosa shared themes of economic growth the most, likely due to the bleak financial climate during and after COVID-19. Mandela and De Klerk were most concerned with humanitarian issues due to the abolishment of the apartheid regime. Finally, Zuma was most present in topic 4, a topic surrounding government expenditure and the eastern cape. This may be due to his frequent expression of concern over corruption.</p>
 <p>Overall, we see a mostly discrete delineation of themes between Zuma, Ramaphosa, Mandela and Mbeki. De Klerk and Motlanthe shared themes with other presidents likely due to having given a disproportionate number of speeches compared to other presidents.</p>
 </section>
 </section>
@@ -367,7 +443,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>This analysis provides valuable insights into the sentiments and themes of presidential speeches in the post-apartheid South African landscape. It outlines the optimism and hope for the new nation as well as the struggles and challenges faced. Each president brings unique insights and goals for the nation and there is demonstration of the timeline of interests over various social and historical events.</p>
 <p>However, limitations were identified and to improve on these in further analysis a recommendation for more language diversity and extensive or standardized data may provide more accurate and concise results in this context.&nbsp;</p>
-<p>Additionally, the use of an LLM for this analysis proved highly useful in debugging of simple code errors and automating simple but monotonous tasks when coding, and proved a valuable took for generation of synonyms, summaries and proof-reading.</p>
+<p>Additionally, the use of an LLM for this analysis proved highly useful in debugging of simple code errors and automating simple but monotonous tasks when coding, and proved a valuable tool for generation of synonyms, summaries and proof-reading.</p>
 <p>Overall, the assignment involved implementation of a range of skills and allowed for exploration of potential tools to compliment coding and writing.</p>
 
 

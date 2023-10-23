@@ -1,0 +1,17 @@
+---
+title: "Large Language Model"
+format: html
+editor: visual
+---
+
+We leveraged the capabilities of an LLM to extract, preprocess, and clean the text data from the SONA speeches, which were publicly available on the official government website. We employed the  suggestions made by ChatGPT to perform text parsing and manipulation to prepare the data for further analysis.
+
+We asked the LLM for different methods to implement sentiment analysis by providing a detailed report of the different techniques and R functions available. This allowed us to explore various techniques and functions, however certain methods proved to be unsatisfactory where the functions did not exist or was only in use for languages such as Python. It was thus a trial-and-error process.
+
+Additionally, we utilized latent Dirichlet allocation (LDA) for topic modelling, a technique that helps uncover the underlying themes and topics in the speeches. The LLM's support in implementing LDA and interpreting the results was invaluable for this aspect of the project. We asked ChatGPT to make logical sense and interpret the topical groups.
+
+We communicated back and forth with ChatGPT, letting it know that its results are incorrect, after which we saw an improvement in its responses. We also saw that the more detailed we were the more correct its answers were.
+
+In terms of performance, the LLM proved to be an indispensable tool for this project. Its knowledge improved efficiency and reduced time spent on certain topics. However, it is important to note that the answers provided by the LLM still required a human to logically assess the results. The LLM also \"crashed\" at certain times, where we had to resort back to traditional Google searches. We acknowledge ChatGPT as a \"fourth\" member of this project, who provided their opinions and knowledge on how to approach a task.
+
+Throughout this project, we learnt that LLMs are powerful tools for assisting with data science projects. Its ability to handle provide valuable insight is a game-changer for projects like this one, where various approaches are available, and the best approach needs to be decided upon. It is an invaluable tool that saves time on \"Googling\" and searching through numerous blog posts. In future, we will implement other LLMs such as GPT-4 to assess the differences in results and response times across various LLMs.

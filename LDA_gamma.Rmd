@@ -75,7 +75,7 @@ speech_lda <- LDA(dtm_speech, k=4, method = "Gibbs", control = list(seed=123))
 top_words <- get_terms(speech_lda, 6)  # Change 10 to the number of top words you want
 
 # View the top words for each topic
-top_words
+#top_words
 ```
 
 ```{r, eval=TRUE, echo=FALSE}

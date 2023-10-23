@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>A Quarto Website - References</title>
+<title>A Quarto Website - Large Language Model</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -90,11 +90,11 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">Natalie Alexander, Thabo Dube, Kelly-Robyn Singh</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./References.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="./References.html" rel="" target="">
  <span class="menu-text">References</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./LLM.html" rel="" target="">
+    <a class="nav-link active" href="./LLM.html" rel="" target="" aria-current="page">
  <span class="menu-text">Large Language Model</span></a>
   </li>  
 </ul>
@@ -116,7 +116,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">References</h1>
+<h1 class="title">Large Language Model</h1>
 </div>
 
 
@@ -131,20 +131,12 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<ul>
-<li><p>Arndt, C., Davies, R., Gabriel, S., Harris, L., Makrelov, K., Modise, B., Robinson, S., Simbanegavi, W., Van Seventer, D., &amp; Anderson, L. (2020). Impact of Covid-19 on the South African economy. Southern Africa-Towards Inclusive Economic Development Working Paper, 111.</p></li>
-<li><p>Bhardwaj A, Narayan Y, Vanraj P, Dutta M (2015) Sentiment analysis for indian stock market prediction using sensex and nifty. In: Procedia computer science, vol 70, pp 85–91</p></li>
-<li><p>Biraj Dahal, Kumar, S. and Li, Z. (2019). Topic modeling and sentiment analysis of global climate change tweets.&nbsp;Social Network Analysis and Mining, [online] 9(1). doi:https://doi.org/10.1007/s13278-019-0568-8.</p></li>
-<li><p>Blei, D.M., Ng, A.Y. and Jordan, M.I., 2003. Latent dirichlet allocation. <em>Journal of machine Learning research</em>, <em>3</em>(Jan), pp.993-1022.</p></li>
-<li><p>Blei, D.M. and Lafferty, J. (2006).&nbsp;Dynamic Topic Models. [online] ResearchGate. Available at: https://www.researchgate.net/publication/221345245_Dynamic_Topic_Models [Accessed 21 Oct.&nbsp;2023].</p></li>
-<li><p>Guo, L., Vargo, C.J., Pan, Z., Ding, W. and Ishwar, P. (2016). Big Social Data Analytics in Journalism and Mass Communication.&nbsp;Journalism &amp; Mass Communication Quarterly, 93(2), pp.332–359. doi:https://doi.org/10.1177/1077699016639231.</p></li>
-<li><p>Hong, L. and Davison, B.D., 2010, July. Empirical study of topic modeling in twitter. In&nbsp;Proceedings of the first workshop on social media analytics&nbsp;(pp.&nbsp;80-88).</p></li>
-<li><p>Obeng-Odoom, F. (2020). The African Continental Free Trade Area. American Journal of Economics and Sociology, 79(1), 167-197.</p></li>
-<li><p>Rao T, Srivastava S (2012) Analyzing stock market movements using Twitter sentiment analysis. In: ASONAM’12 Proceedings of the 2012 international conference on advances in social networks analysis and mining (ASONAM 2012), pp 119–123</p></li>
-<li><p>Singla Z, Randhawa S, Jain S (2017) Statistical and sentiment analysis of consumer product reviews. In: 8th International conference on computing, communication and networking technologies (ICCCNT), pp 1–6</p></li>
-<li><p>Tang, J., Zhang, M. and Mei, Q., 2013, August. One theme in all views: modeling consensus topics in multiple contexts. In&nbsp;Proceedings of the 19th ACM SIGKDD international conference on Knowledge discovery and data mining&nbsp;(pp.&nbsp;5-13).</p></li>
-<li><p>Xie, R., Kai, S., Dickson K.W. Chiu and Wang, Y. (2021). Exploring Public Response to COVID-19 on Weibo with LDA Topic Modeling and Sentiment Analysis.&nbsp;Data and Information Management, [online] 5(1), pp.86–99. doi:https://doi.org/10.2478/dim-2020-0023.</p></li>
-</ul>
+<p>We leveraged the capabilities of an LLM to extract, preprocess, and clean the text data from the SONA speeches, which were publicly available on the official government website. We employed the&nbsp; suggestions made by ChatGPT to perform text parsing and manipulation to prepare the data for further analysis.</p>
+<p>We asked the LLM for different methods to implement sentiment analysis by providing a detailed report of the different techniques and R functions available. This allowed us to explore various techniques and functions, however certain methods proved to be unsatisfactory where the functions did not exist or was only in use for languages such as Python. It was thus a trial-and-error process.</p>
+<p>Additionally, we utilized latent Dirichlet allocation (LDA) for topic modelling, a technique that helps uncover the underlying themes and topics in the speeches. The LLM’s support in implementing LDA and interpreting the results was invaluable for this aspect of the project. We asked ChatGPT to make logical sense and interpret the topical groups.</p>
+<p>We communicated back and forth with ChatGPT, letting it know that its results are incorrect, after which we saw an improvement in its responses. We also saw that the more detailed we were the more correct its answers were.</p>
+<p>In terms of performance, the LLM proved to be an indispensable tool for this project. Its knowledge improved efficiency and reduced time spent on certain topics. However, it is important to note that the answers provided by the LLM still required a human to logically assess the results. The LLM also "crashed" at certain times, where we had to resort back to traditional Google searches. We acknowledge ChatGPT as a "fourth" member of this project, who provided their opinions and knowledge on how to approach a task.</p>
+<p>Throughout this project, we learnt that LLMs are powerful tools for assisting with data science projects. Its ability to handle provide valuable insight is a game-changer for projects like this one, where various approaches are available, and the best approach needs to be decided upon. It is an invaluable tool that saves time on "Googling" and searching through numerous blog posts. In future, we will implement other LLMs such as GPT-4 to assess the differences in results and response times across various LLMs.</p>
 
 
 

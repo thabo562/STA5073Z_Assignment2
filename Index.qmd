@@ -8,6 +8,8 @@ editor_options:
 
 ## Abstract
 
+The State of the Nation Address (SONA) is an annual event in South Africa, where the President reports on the nation\'s socio-economic status. This project aims to conduct a descriptive analysis of SONA speeches from 1994 to 2023 by means of sentiment analysis and topic modelling. Sentiment analysis involves determining the emotional undertone behind words to gain an understanding of the attitudes, opinions, and emotions of a speaker. On the other hand, topic modelling, specifically Latent Dirichlet Allocation (LDA), is a type of statistical model used for discovering abstract topics that occur in a collection of documents. By using these methods, we find that most presidents had polarity in the sentiment of their speeches with topics such as hope, growth and empowerment vs economic crises, crime and social injustice. We also identified trends in sentiment over time that were characterised by the election cycle and revealed that sentiment in speeches is generally higher closer to election than during other annual SONAs. In addition, we find that the topics reflected the South African climate at each period of presidency.
+
 ## Introduction
 
 The state of the nation address (SONA), commonly referred to as the 'Opening of Parliament' is an annual event wherein the president delivers a speech summarizing the political landscape for the current and upcoming year. The SONA touches on a wide range of themes ranging from socio-economic issues to political endeavors, this provides a snapshot of a nation's aspirations, difficulties, triumphs, and current events. South Africa has experienced substantial socio-economic transitions, had to navigate many novel and historic challenges, and undertake developments for improvement over the past 3 decades. 
@@ -438,7 +440,7 @@ p1 = df_bigrams %>% filter(sentiment == "negative" & president_13 == "Mandela")%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("c. Mandela: Top 5 negative bigrams")+
+  ggtitle("c. Mandela: Top 5 negative")+
   theme(legend.position = "none")
 
 
@@ -450,7 +452,7 @@ p2 = df_bigrams %>% filter(sentiment == "negative" & president_13 == "Mbeki")%>%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("e. Mbeki: Top 5 negative bigrams")+
+  ggtitle("e. Mbeki: Top 5 negative ")+
   theme(legend.position = "none")
 
 
@@ -462,7 +464,7 @@ p3 = df_bigrams %>% filter(sentiment == "negative" & president_13 == "Ramaphosa"
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("k. Ramaphosa: Top 5 negative bigrams")+
+  ggtitle("k. Ramaphosa: Top 5 negative ")+
   theme(legend.position = "none")
 
 
@@ -473,7 +475,7 @@ p4 = df_bigrams %>% filter(sentiment == "negative" & president_13 == "Zuma")%>%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("i. Zuma: Top 5 negative bigrams")+
+  ggtitle("i. Zuma: Top 5 negative ")+
   theme(legend.position = "none")
 
 
@@ -485,7 +487,7 @@ p5 = df_bigrams %>% filter(sentiment == "negative" & president_13 == "deKlerk")%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("a. deKlerk: Top 5 negative bigrams")+
+  ggtitle("a. deKlerk: Top 5 negative ")+
   theme(legend.position = "none")
 
 
@@ -497,7 +499,7 @@ p6 = df_bigrams %>% filter(sentiment == "negative" & president_13 == "Motlanthe"
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("g. Motlanthe: Top 5 negative bigrams")+
+  ggtitle("g. Motlanthe: Top 5 negative")+
   theme(legend.position = "none")
 
 
@@ -510,7 +512,7 @@ p7 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "Mandela")%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("d. Mandela: Top 5 positive bigrams")+
+  ggtitle("d. Mandela: Top 5 positive")+
   theme(legend.position = "none")
 
 
@@ -522,7 +524,7 @@ p8 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "Mbeki")%>%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("f. Mbeki: Top 5 positive bigrams")+
+  ggtitle("f. Mbeki: Top 5 positive")+
   theme(legend.position = "none")
 
 
@@ -534,7 +536,7 @@ p9 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "Ramaphosa"
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("l. Ramaphosa: Top 5 positive bigrams")+
+  ggtitle("l. Ramaphosa: Top 5 positive")+
   theme(legend.position = "none")
 
 
@@ -546,7 +548,7 @@ p10 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "Zuma")%>%
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("j. Zuma: Top 5 positive bigrams")+
+  ggtitle("j. Zuma: Top 5 positive ")+
   theme(legend.position = "none")
 
 
@@ -558,7 +560,7 @@ p11 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "deKlerk")
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("b. deKlerk: Top 5 positive bigrams")+
+  ggtitle("b. deKlerk: Top 5 positive")+
   theme(legend.position = "none")
 
 
@@ -570,7 +572,7 @@ p12 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "Motlanthe
   arrange(desc(n)) %>%
   ggplot(aes(reorder(bigram,n),n, fill=bigram)) + 
   geom_col() + coord_flip() + xlab('')+
-  ggtitle("h. Motlanthe: Top 5 positive bigrams")+
+  ggtitle("h. Motlanthe: Top 5 positive")+
   theme(legend.position = "none")
 
 
@@ -733,7 +735,7 @@ a<- trigrams_sep %>%
   geom_col() +
   coord_flip() +
   xlab('') +
-  labs(title = "Top 5 Positive Trigrams", caption = " ") +  # Add a title and figure legend
+  labs(title = "Top 5 Positive", caption = " ") +  # Add a title and figure legend
   scale_fill_viridis(discrete = TRUE) +
   theme(legend.position = "none")  # Remove the legend
 
@@ -746,7 +748,7 @@ b<- trigrams_sep %>%
   geom_col() +
   coord_flip() +
   xlab('') +
-  labs(title = "Top 5 Negative Trigrams", caption = "") +  # Add a title and figure legend
+  labs(title = "Top 5 Negative", caption = "") +  # Add a title and figure legend
   scale_fill_viridis(discrete = TRUE) +
   theme(legend.position = "none")  # Remove the legend
 
@@ -1210,6 +1212,113 @@ grid.arrange(p1, p2,
                ncol = 3)
 ```
 
+```{r, include=FALSE}
+load("LDA_Gamma.RData")
+
+# removing custom stop words that frequently appear 
+custom_stopwords <- c("with", "regards", "to", "and", "other", "custom", "stopwords", "you", "want", "south", "africa", "madame","speaker")
+
+# removed stop words 
+# Define your replace_reg and unnest_reg
+replace_reg <- "(http.*?(\\s|.$))|(www.*?(\\s|.$))|&amp;|&lt;|&gt;"
+rnum <- "\\d+"
+unnest_reg <- "[^\\w_#@']"
+
+
+# tidy dataset, removed numbers
+tidy_sona<- sona %>%
+  mutate(speech= str_trim(speech, side= "left")) %>%
+  mutate(speech = str_replace_all(speech, replace_reg, "")) %>%
+  mutate(speech=str_replace_all( speech, "[[:punct:]]", ""))%>%
+  mutate(speech = str_replace_all(speech , rnum , ""))  %>%
+  mutate(filename = sub("\\.txt$", "", filename))
+
+# clean and bigrams 
+  bigram_sona <- tidy_sona %>%
+   unnest_tokens(bigram, speech, token ="ngrams", n=2, to_lower = TRUE) %>%
+  separate(bigram, c("word1", "word2"), sep = " ")%>%
+  filter(!word1 %in% stop_words$word & !word2 %in% stop_words$word) %>%
+filter(!(word1 %in% custom_stopwords | word2 %in% custom_stopwords)) %>%
+unite(bigram, word1, word2, sep = " ")
+# LDA 
+
+# tdf
+  speech_tdf <- bigram_sona %>%
+    group_by(filename, bigram) %>%
+    count() %>%
+    ungroup()
+  
+  dtm_speech <- speech_tdf %>%
+    cast_dtm(filename, bigram, n)
+  
+speech_lda <- LDA(dtm_speech, k=4, method = "Gibbs", control = list(seed=123))
+
+# Extract top words
+top_words <- get_terms(speech_lda, 6)  # Change 10 to the number of top words you want
+
+# View the top words for each topic
+#top_words
+
+# Create a data frame with your topics
+topics <- data.frame(
+  "Topic 1" = c("Local Government", "Public Service", "United Nations", "Economic Empowerment", "World Cup", "Public Sector"),
+  "Topic 2" = c("Private Sector", "Economic Growth", "Create Jobs", "Social Partners", "Law Enforcement", "National Assembly"),
+  "Topic 3" = c("Public Service", "Human Rights", "Police Service", "Local Government", "Economic Growth", "Traditional Leaders"),
+  "Topic 4" = c("Billion Rand", "Deputy President", "National Assembly", "Eastern Cape", "Honourable Chairperson", "District Municipality")
+)
+```
+
+```{r}
+#| tbl-cap: "Top terms for each topic"
+#| label: tbl-kelly
+# Create a kable table with Bootstrap styling
+knitr:: kable(topics)
+```
+
+```{r, include=FALSE}
+# convert to tidy 
+speech_lda <- tidy(speech_lda, matrix = "gamma")
+
+# convert to tibble 
+tidy_sona <- as_tibble(tidy_sona)
+
+# join the LDA topics and the sona data 
+speech_g <- speech_lda %>%
+  left_join(tidy_sona, by = c("document" = "filename")) %>%
+  spread(key = topic, value = gamma, sep = "_")
+  
+# group by filename/document 
+speech_g %>%
+  group_by(document) %>%
+  summarise(ntopic1= sum(topic_1 > 0.5 ))
+
+# group by topics 
+top_term<- speech_lda %>%
+  group_by(topic) %>%
+  top_n(10, gamma) %>%
+  ungroup(topic, -gamma)
+
+```
+
+```{r}
+#| fig-cap: "Topic Distribution by Speech"
+#| label: fig-Topic_Dist
+
+# Plot the topic and respective filenames it's associated with
+top_term %>% 
+  mutate(document = reorder(document, gamma)) %>%
+  ggplot(aes(document, gamma, fill = factor(topic))) +
+  geom_col(show.legend = FALSE) +  # Use FALSE to hide the legend
+  facet_wrap(~topic, scales = "free") +
+  coord_flip() +
+  labs(
+    title = "Topic Distributions by Filename",  # Add a heading
+    x = "Document",
+    y = "Gamma Value",
+    fill = "Topic"
+  )
+```
+
 ## Discussion 
 
 ### Sentiment Analysis for Bigrams 
@@ -1234,7 +1343,7 @@ The log2(topic 1/topic 2) plots above in @fig-LDA_per_prez shows the bigrams wit
 
 This analysis shows that most presidential speeches have polarity, with positive sentiment touching on topics such as freedom, hope and peace, in contrast to negative sentiment touching on topics of crime, social injustices and poverty.
 
-For the document-topic probabilities, we see that most presidents had a relatively stable set of interests and themes in their speeches. Table 1 contains the top terms for each topic, we can infer that topic 1 relates international relations such as the world cup and United Nations, additionally the local community. Topic 2 revolves around economic growth, topic 3 is focused on public services and humanitarian themes and topic 4 seemingly involves government expenditures and regional government. From Figure #, we see that Mbeki, Zuma and Motlanthe focused on Topic 1 which may be due to his concerns over poverty and job creation as seen from sentiment analysis and Zuma and Motlanthe as they were involved in the 2010 world cup. Ramaphosa, Zuma and Mandela appeared in topic 2, Ramaphosa shared themes of economic growth the most, likely due to the bleak financial climate during and after COVID-19. Mandela and De Klerk were most concerned with humanitarian issues due to the abolishment of the apartheid regime. Finally, Zuma was most present in topic 4, a topic surrounding government expenditure and the eastern cape. This may be due to his frequent expression of concern over corruption.
+For the document-topic probabilities, we see that most presidents had a relatively stable set of interests and themes in their speeches. @tbl-kelly contains the top terms for each topic, we can infer that topic 1 relates international relations such as the world cup and United Nations, additionally the local community. Topic 2 revolves around economic growth, topic 3 is focused on public services and humanitarian themes and topic 4 seemingly involves government expenditures and regional government. From @fig-Topic_Dist, we see that Mbeki, Zuma and Motlanthe focused on Topic 1 which may be due to his concerns over poverty and job creation as seen from sentiment analysis and Zuma and Motlanthe as they were involved in the 2010 world cup. Ramaphosa, Zuma and Mandela appeared in topic 2, Ramaphosa shared themes of economic growth the most, likely due to the bleak financial climate during and after COVID-19. Mandela and De Klerk were most concerned with humanitarian issues due to the abolishment of the apartheid regime. Finally, Zuma was most present in topic 4, a topic surrounding government expenditure and the eastern cape. This may be due to his frequent expression of concern over corruption.
 
 Overall, we see a mostly discrete delineation of themes between Zuma, Ramaphosa, Mandela and Mbeki. De Klerk and Motlanthe shared themes with other presidents likely due to having given a disproportionate number of speeches compared to other presidents.
 
@@ -1244,6 +1353,6 @@ This analysis provides valuable insights into the sentiments and themes of presi
 
 However, limitations were identified and to improve on these in further analysis a recommendation for more language diversity and extensive or standardized data may provide more accurate and concise results in this context. 
 
-Additionally, the use of an LLM for this analysis proved highly useful in debugging of simple code errors and automating simple but monotonous tasks when coding, and proved a valuable took for generation of synonyms, summaries and proof-reading.
+Additionally, the use of an LLM for this analysis proved highly useful in debugging of simple code errors and automating simple but monotonous tasks when coding, and proved a valuable tool for generation of synonyms, summaries and proof-reading.
 
 Overall, the assignment involved implementation of a range of skills and allowed for exploration of potential tools to compliment coding and writing.
