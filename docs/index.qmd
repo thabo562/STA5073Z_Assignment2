@@ -127,6 +127,7 @@ The figure below illustrates the evolving sentiment of these presidential speech
 ```{r}
 #| fig-cap: "Speech sentiment over time"
 #| label: sent_time 
+#| 
 sentiments_per_speech <- speech_data_sentiment %>%
                           group_by(filename,president_13,date)%>%
                         summarize(net_sentiment = (sum(value)), .groups = "keep")
@@ -142,7 +143,7 @@ ggplot(sentiments_per_speech, aes(x=date, y=net_sentiment)) +
 
 ```
 
-The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki\'s general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively
+The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki\'s general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively @sent_
 
 ## Methods
 
@@ -191,7 +192,7 @@ Next the document-topic probabilities were extracted. To accomplish this task, L
 
 #### Bigrams
 
-```{r}
+```{r, include=FALSE}
 
 load("~/STA5073Z_Assignment2/Assignment2_Natalie.RData")
 
@@ -613,7 +614,7 @@ grid.arrange(p1, p2, ncol=2)
 
 #### Trigrams
 
-```{r}
+```{r, include=FALSE}
 load("Senti_Analysis.RData")
 library(viridis)
 
@@ -663,7 +664,7 @@ trigrams_sep <- trigrams_sep %>%
   select(-opp_sentiment)
 ```
 
-```{r}
+```{r, include=FALSE}
 # Calculate the net sentiment for trigrams
 trigrams_sep <- trigrams_sep %>%
   mutate(net_sentiment = case_when(
