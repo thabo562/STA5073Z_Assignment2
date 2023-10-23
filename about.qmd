@@ -1,4 +1,5 @@
 ---
+title: "About"
 about:
   template: trestles
   image-width: 10em

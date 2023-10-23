@@ -8,7 +8,7 @@ editor_options:
 
 ## Abstract
 
-The State of the Nation Address (SONA) is an annual event in South Africa, where the President reports on the nation\'s socio-economic status. This project aims to conduct a descriptive analysis of SONA speeches from 1994 to 2023 by means of sentiment analysis and topic modelling. Sentiment analysis involves determining the emotional undertone behind words to gain an understanding of the attitudes, opinions, and emotions of a speaker. On the other hand, topic modelling, specifically Latent Dirichlet Allocation (LDA), is a type of statistical model used for discovering abstract topics that occur in a collection of documents. By using these methods, we find that most presidents had polarity in the sentiment of their speeches with topics such as hope, growth and empowerment vs economic crises, crime and social injustice. We also identified trends in sentiment over time that were characterised by the election cycle and revealed that sentiment in speeches is generally higher closer to election than during other annual SONAs. In addition, we find that the topics reflected the South African climate at each period of presidency.
+The State of the Nation Address (SONA) is an annual event in South Africa, where the President reports on the nation's socio-economic status. This project aims to conduct a descriptive analysis of SONA speeches from 1994 to 2023 by means of sentiment analysis and topic modelling. Sentiment analysis involves determining the emotional undertone behind words to gain an understanding of the attitudes, opinions, and emotions of a speaker. On the other hand, topic modelling, specifically Latent Dirichlet Allocation (LDA), is a type of statistical model used for discovering abstract topics that occur in a collection of documents. By using these methods, we find that most presidents had polarity in the sentiment of their speeches with topics such as hope, growth and empowerment vs economic crises, crime and social injustice. We also identified trends in the sentiment over time, which was characterised by the election cycle, and found that the sentiment in speeches were generally more positive closer to election periods. In addition, we found that the topics reflect the South African climate at each period of presidency.
 
 ## Introduction
 
@@ -883,14 +883,14 @@ beta_spread <- sona_topics_deKlerk %>%
 
 p1 = beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
-  top_n(10, abs(log_ratio)) %>%
+  top_n(5, abs(log_ratio)) %>%
   ungroup() %>%
   mutate(term = reorder(term, log_ratio)) %>%
   ggplot(aes(term, log_ratio, fill=direction)) +
   geom_col() +
   labs(y = '') +
   coord_flip()+
-  ggtitle("a. deKlerk: beta values for topic 1 vs topic 2")+
+  ggtitle("a. deKlerk")+
   theme(legend.position = "none")
 
 ### 5.2.2 Mandela
@@ -946,14 +946,14 @@ beta_spread <- sona_topics_mandela %>%
 
 p2 = beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
-  top_n(10, abs(log_ratio)) %>%
+  top_n(5, abs(log_ratio)) %>%
   ungroup() %>%
   mutate(term = reorder(term, log_ratio)) %>%
   ggplot(aes(term, log_ratio, fill=direction)) +
   geom_col() +
   labs(y = '') +
   coord_flip()+
-  ggtitle("b. Mandela: beta values for topic 1 vs topic 2")+
+  ggtitle("b. Mandela")+
   theme(legend.position = "none")
 
 ### 5.2.3 Mbeki
@@ -1005,14 +1005,14 @@ beta_spread <- sona_topics_mbeki %>%
 
 p3 = beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
-  top_n(10, abs(log_ratio)) %>%
+  top_n(5, abs(log_ratio)) %>%
   ungroup() %>%
   mutate(term = reorder(term, log_ratio)) %>%
   ggplot(aes(term, log_ratio, fill=direction)) +
   geom_col() +
   labs(y = '') +
   coord_flip()+
-  ggtitle("c. Mbeki: beta values for topic 1 vs topic 2")+
+  ggtitle("c. Mbeki")+
   theme(legend.position = "none")
 
 
@@ -1064,14 +1064,14 @@ beta_spread <- sona_topics_motlanthe %>%
 
 p4 = beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
-  top_n(10, abs(log_ratio)) %>%
+  top_n(5, abs(log_ratio)) %>%
   ungroup() %>%
   mutate(term = reorder(term, log_ratio)) %>%
   ggplot(aes(term, log_ratio, fill=direction)) +
   geom_col() +
   labs(y = '') +
   coord_flip()+
-  ggtitle("d. Motlanthe: beta values for topic 1 vs topic 2")+
+  ggtitle("d. Motlanthe")+
   theme(legend.position = "none")
 
 ##########
@@ -1127,14 +1127,14 @@ beta_spread <- sona_topics_zuma %>%
 
 p5 = beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
-  top_n(10, abs(log_ratio)) %>%
+  top_n(5, abs(log_ratio)) %>%
   ungroup() %>%
   mutate(term = reorder(term, log_ratio)) %>%
   ggplot(aes(term, log_ratio, fill=direction)) +
   geom_col() +
-  labs(y = 'Log2 ratio of beta in topic 2 / topic 1') +
+  labs(y = '') +
   coord_flip()+
-  ggtitle("e. Zuma: beta values for topic 1 vs topic 2")+
+  ggtitle("e. Zuma")+
   theme(legend.position = "none")
 
 ###########
@@ -1192,14 +1192,14 @@ beta_spread <- sona_topics_rama %>%
 
 p6 = beta_spread %>%
   group_by(direction = log_ratio > 0) %>%
-  top_n(10, abs(log_ratio)) %>%
+  top_n(5, abs(log_ratio)) %>%
   ungroup() %>%
   mutate(term = reorder(term, log_ratio)) %>%
   ggplot(aes(term, log_ratio, fill=direction)) +
   geom_col() +
   labs(y = '') +
   coord_flip()+
-  ggtitle("f. Ramaphosa: beta values for topic 1 vs topic 2")+
+  ggtitle("f. Ramaphosa")+
   theme(legend.position = "none")
 ```
 
@@ -1209,7 +1209,7 @@ p6 = beta_spread %>%
 grid.arrange(p1, p2,
              p3, p4, 
              p5, p6,
-               ncol = 3)
+               ncol = 2)
 ```
 
 ```{r, include=FALSE}
