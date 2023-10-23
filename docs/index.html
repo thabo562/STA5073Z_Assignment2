@@ -171,7 +171,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Sentiment analysis and topic modelling are used in a variety of fields, with application in financial market prediction, business review analyses, and political science research, to name a few.</p>
 <p>Bhardwaj et al.&nbsp;(2015)describes a system in which sentiment analysis is applied to stock indices, which act as indicators for overall stock market performance. Another paper by Rao Srivastava (2012) assessed the association between tweet sentiments and market performance, by assessing tweet and market data from 14 companies. The authors used a Naïve Bayesian classifier for sentiment classification and found that the polarity of sentiments significantly influenced investment and stock prices. In addition, they found that the previous week’s sentiments strongly impacted the following week’s opening and closing stock prices.</p>
 <p>Manufacturers and companies may also benefit from sentiment analysis by assessing customer preferences and seasonal, market trends. These organizations can perform sentiment analysis on customer review data with the aim of improving product- or service quality. Singla et al.&nbsp;(2017) performed sentiment analysis on Amazon phone review data by assessing the negative and positive polarity in customer responses, with sentiments such as anger, anticipation, joy, and disgust, to name a few. The authors developed a support vector machine (SVM) model for sentiment classification and found that most customers preferred Samsung phones.</p>
-<p>Sentiment analysis has also been used in political science research, where these studies usually use data obtained from social media sites, in addition to various news platforms. Singh et al.&nbsp;(2017)<sup>3</sup> proposed a method to assess people’s opinions and biases towards demonetization, an experiment particularly relevant in India, where the government demonetized ₹500 and ₹1000 banknotes. The authors used a lexicon-based approach, namely Valence Aware Dictionary and Sentiment Reasoner (VADER) for sentiment analysis of tweet data.</p>
+<p>Sentiment analysis has also been used in political science research, where these studies usually use data obtained from social media sites, in addition to various news platforms. Singh et al.&nbsp;(2017) proposed a method to assess people’s opinions and biases towards demonetization, an experiment particularly relevant in India, where the government demonetized ₹500 and ₹1000 banknotes. The authors used a lexicon-based approach, namely Valence Aware Dictionary and Sentiment Reasoner (VADER) for sentiment analysis of tweet data.</p>
 <p>In the past, public opinions were usually collected using interviews and surveys, however, in the modern era of social media, there is a multitude of shared opinions expressed on online platforms such as Twitter and Facebook. Researchers are now interested in how news media can outline a campaign or a public figure (such as a politician) and how this affects public opinion. In contrast, researchers are also interested in how social media platforms and public opinions can influence news agenda.</p>
 <p>Researchers often perform sentiment analysis and topic modelling in tandem to discern public sentiment as well as recurring themes and topics (Guo et al., 2016).</p>
 <p>Topic modelling, as we’ve discussed before, is an unsupervised machine learning technique that uncovers abstract ‘topics’ within a document or a collection of documents. These ‘topics’ are characterized by their related words. The approach views each document as an unordered “bag of words”, with words appearing at varying frequencies within or across documents. The model then calculates the weights of topics in the document based on the frequency of words related to those topics. By examining these topic weights, we can identify the main idea or theme of the document.</p>
@@ -186,29 +186,29 @@ ul.task-list li input[type="checkbox"] {
 <p>The data consists of 36 speeches made by the presidents during their terms from May 1994 to February 2023. The number of speeches made by each president varied.&nbsp; Specifically, F.W. de Klerk and Motlanthe each have one recorded speech, while Nelson Mandela and Cyril Ramaphosa have seven speeches each. In contrast, Jacob Zuma and Thabo Mbeki have ten speeches each. Although each speech is unique in its own way, there are certain utterance that are common in the group of speech of each president. The manner in which they speech is consistent through the different speeches and this can be see through the words that they use and the sentiment they possess. Each president also gave their speeches for a varied amount of time. The following figure shows the average length of a speech according to the number of sentences used.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-sent_count" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="Index_files/figure-html/sent_count-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Average number of sentences per president</figcaption>
+<p><img src="Index_files/figure-html/fig-sent_count-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;1: Average number of sentences per president</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Two distinct patterns stand out when examining the data, the first being the shortness of F.W. de Klerk’s speech. His final pre-election speech in office consisted of 97 sentences, which pale in comparison to other pre-election speeches in the data set. For instance, Nelson Mandela’s pre-election speech in 1999 was substantially longer with 288 sentences, while Jacob Zuma’s pre-election speech of 2014 was even more extensive with 309 sentences.</p>
+<p>Two distinct patterns stand out when examining the <a href="#fig-sent_count">Figure&nbsp;1</a> , the first being the shortness of F.W. de Klerk’s speech. His final pre-election speech in office consisted of 97 sentences, which pale in comparison to other pre-election speeches in the data set. For instance, Nelson Mandela’s pre-election speech in 1999 was substantially longer with 288 sentences, while Jacob Zuma’s pre-election speech of 2014 was even more extensive with 309 sentences.</p>
 <p>On the other hand, Ramaphosa stands out for his consistent and relatively lengthy speeches. On average, his speeches run for about 327 sentences. In contrast, the other presidents, namely Mandela, Mbeki, Motlanthe, Zuma, fell within a similar range, with an average of around 250 sentences per speech. These distinct patterns shed light on the varying communication styles and approaches of these South African presidents in their speeches.</p>
 <p>Additionally, it is important to consider the timing of each speech, as it significantly influences the communication style chosen by each president. These speeches fall into three main categories: pre-election, post-election, and general SONAs. The distinct goals and messages associated with each category result in varying sentiments in their speeches. Pre-election speeches are characterized by optimism, unity, and empowerment aimed at voters, naturally resulting in a predominantly positive sentiment. Post-election speeches convey sentiments of gratitude and hope, expressing thanks to the electorate and fostering a sense of hope for the future, also leading to a largely positive sentiment. In contrast, general annual SONAs often focus on reassurance and policy changes. These speeches aim to reassure the public about the government’s commitment to addressing various issues and to announce policy changes. While the sentiment remains positive, it may be less pronounced than in pre-election and post-election speeches.</p>
-<p>The figure below illustrates the evolving sentiment of these presidential speeches over time, reflecting how the timing and specific objectives of each speech category contribute to the overall sentiment</p>
+<p><a href="#fig-sent_time">Figure&nbsp;2</a> illustrates the evolving sentiment of these presidential speeches over time, reflecting how the timing and specific objectives of each speech category contribute to the overall sentiment</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-sent_time" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="Index_files/figure-html/sent_time-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Speech sentiment over time</figcaption>
+<p><img src="Index_files/figure-html/fig-sent_time-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: Speech sentiment over time</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki's general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively <span class="citation" data-cites="sent_">@sent_</span></p>
+<p>The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki's general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively</p>
 </section>
 <section id="methods" class="level2">
 <h2 class="anchored" data-anchor-id="methods">Methods</h2>
@@ -254,18 +254,28 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="bigrams">Bigrams</h4>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Index_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<div id="fig-Pos_Neg_Bigrams-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Index_files/figure-html/fig-Pos_Neg_Bigrams-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Top 5 positive and negative Bigrams</figcaption>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="Index_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid" width="672"></p>
+<div id="fig-Pos_Neg_Bigrams-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Index_files/figure-html/fig-Pos_Neg_Bigrams-2.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: Top 5 positive and negative Bigrams</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-Top_bigrams" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="Index_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Top 5 bigrams related to negative sentiments</figcaption>
+<p><img src="Index_files/figure-html/fig-Top_bigrams-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;5: Top 5 bigrams Across Presidents</figcaption>
 </figure>
 </div>
 </div>
@@ -275,22 +285,32 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="trigrams">Trigrams</h4>
 <div class="cell">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-Top_trigrams" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="Index_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Barplot Showing the 5 Most Frequently Used Negative Trigrams Overall</figcaption>
+<p><img src="Index_files/figure-html/fig-Top_trigrams-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;6: Barplot Showing the 5 Most Frequently Used Negative Trigrams Overall</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Index_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+<div id="fig-Pos_Trigrams" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Index_files/figure-html/fig-Pos_Trigrams-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;7: 10 Most Frequently Used Positive Trigrams For Each President</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="Index_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+<div id="fig-Neg_Trigrams" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Index_files/figure-html/fig-Neg_Trigrams-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;8: 10 Most Frequently Used Negative Trigrams For Each President</figcaption>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -300,10 +320,10 @@ ul.task-list li input[type="checkbox"] {
 <p>The figure below shows the results of topic analysis using beta probabilities (bigram-topic probabilities), where the beta probability represents the probability that a bigram belongs to a certain topic. See discussion for further interpretation.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-LDA_All" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="Index_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Barplots showing results of LDA topic modelling using beta (bigram-topic) probabilities and k = 2 topics, where topic 1 is shown on the left and topic 2 is shown on the right</figcaption>
+<p><img src="Index_files/figure-html/fig-LDA_All-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;9: Barplots showing results of LDA topic modelling using beta (bigram-topic) probabilities and k = 2 topics, where topic 1 is shown on the left and topic 2 is shown on the right</figcaption>
 </figure>
 </div>
 </div>
@@ -311,10 +331,10 @@ ul.task-list li input[type="checkbox"] {
 <p>The figure below shows the results of beta topic analysis using beta probabilities (bigram-topic probabilities) for former president Mandela. See discussion for further information.</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
+<div id="fig-LDA_per_prez" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="Index_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Barplots showing results of LDA topic modelling using beta (bigram-topic) probabilities and k = 2 topics for each former president class. Topic 1 is shown in red and topic 2 is shown in green.</figcaption>
+<p><img src="Index_files/figure-html/fig-LDA_per_prez-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;10: Barplots showing results of LDA topic modelling using beta (bigram-topic) probabilities and k = 2 topics for each former president class. Topic 1 is shown in red and topic 2 is shown in green.</figcaption>
 </figure>
 </div>
 </div>
@@ -325,20 +345,19 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
 <section id="sentiment-analysis-for-bigrams" class="level3">
 <h3 class="anchored" data-anchor-id="sentiment-analysis-for-bigrams">Sentiment Analysis for Bigrams</h3>
-<p>In Figure #nat_per_pres_sentiment.png above, we see that DeKlerk's top 5 bigrams with negative sentiment are about hopelessness and boycotting, possibly in relation to the end of the Apartheid regime. Mandela and Mbeki's top 5 bigrams with negative sentiment are mainly about challenges, such as crime and poverty. We see that Motlanthe's top 5 bigrams with negative sentiment is also focused on poverty, but now special attention is given to criminal justice. Zuma's top 5 bigrams with negative sentiment is also about finances, but also pays attention to violence. Ramaphosa's top 5 bigrams with negative sentiment is focused on (gender based) violence.</p>
+<p>In <a href="#fig-Pos_Neg_Bigrams-1">Figure&nbsp;3</a> and <a href="#fig-Pos_Neg_Bigrams-2">Figure&nbsp;4</a> we see that DeKlerk's top 5 bigrams with negative sentiment are about hopelessness and boycotting, possibly in relation to the end of the Apartheid regime. Mandela and Mbeki's top 5 bigrams with negative sentiment are mainly about challenges, such as crime and poverty. We see that Motlanthe's top 5 bigrams with negative sentiment is also focused on poverty, but now special attention is given to criminal justice. Zuma's top 5 bigrams with negative sentiment is also about finances, but also pays attention to violence. Ramaphosa's top 5 bigrams with negative sentiment is focused on (gender based) violence.</p>
 <p>President deKlerk's top 5 bigrams with positive sentiment looks towards freedom and peace, which again points to the end of Apartheid. All other president's top 5 bigrams with positive sentiment have undertones of hope and improvement.</p>
-<p>Albeit a common trend of poverty and crime post-Apartheid, we see that the general sentiment is positive across all presidents, which is reinforced by Figure #nat_all_pres_sentiment.png were the frequency of positive sentiment far surpasses that of the negative sentiment.</p>
+<p>Albeit a common trend of poverty and crime post-Apartheid, we see that the general sentiment is positive across all presidents, in <a href="#fig-Top_bigrams">Figure&nbsp;5</a> which is reinforced by were the frequency of positive sentiment far surpasses that of the negative sentiment.</p>
 </section>
 <section id="sentiment-analysis-for-trigrams" class="level3">
 <h3 class="anchored" data-anchor-id="sentiment-analysis-for-trigrams">Sentiment Analysis for trigrams</h3>
-<p>The results of the trigram split expresses very similar insights to the bigram split. Referring to figure 3, we note that De Klerk and Mandela echoed very similar positive remarks regarding peace, reconciliation and freedom at the time due to the abolishment of the apartheid regime and welcoming of the freedom alliance. Mbeki follows with discussions of black economic empowerment, showing the developments in concerns during the countries plight for equality. Motlanthe's sentiment analysis was not insightful, this is likely since his presidency lasted 8 months. Zuma frequently mentioned the public works programme, which he was launching in 2014 and Ramaphosa also mentioned the African Continental Free Trade Area (ACFTA), echoing his support for collaboration with other African nations (Obeng-Odoom, 2020).</p>
-<p>Figure 4 depicts De Klerk's negative sentiments are insightful into the public opinion at this time, he mostly spoke about concerns and boycotting, likely trying to placate the public's concerns over the transition and trying to discourage boycotting of elections. All subsequent presidents had emphasized concerns over crime, violence, and poverty with Zuma and Ramaphosa sharing concerns about corruption. This implies a timeline of when issues surrounding corruption were becoming concerning. Additionally, Ramaphosa mentions the state of disaster, in context of the COVID-19 pandemic (Arndt et al., 2020), as well as the expropriation of land as he is determined to fulfil the promise of lawful land reform post-apartheid.</p>
-<p>In figure 6, for 2016 we see "die kind wat", being categorized as a negative statement, when it is in fact a neutral statement. This highlights a limitation of this assignment as SA has a diverse mix of languages and using only an English lexicon leads to phrases in other languages being miscategorized or not available.</p>
+<p>The results of the trigram split expresses very similar insights to the bigram split. Referring to <a href="#fig-Pos_Trigrams">Figure&nbsp;7</a> we note that De Klerk and Mandela echoed very similar positive remarks regarding peace, reconciliation and freedom at the time due to the abolishment of the apartheid regime and welcoming of the freedom alliance. Mbeki follows with discussions of black economic empowerment, showing the developments in concerns during the countries plight for equality. Motlanthe's sentiment analysis was not insightful, this is likely since his presidency lasted 8 months. Zuma frequently mentioned the public works programme, which he was launching in 2014 and Ramaphosa also mentioned the African Continental Free Trade Area (ACFTA), echoing his support for collaboration with other African nations (Obeng-Odoom, 2020).</p>
+<p><a href="#fig-Neg_Trigrams">Figure&nbsp;8</a> depicts De Klerk's negative sentiments are insightful into the public opinion at this time, he mostly spoke about concerns and boycotting, likely trying to placate the public's concerns over the transition and trying to discourage boycotting of elections. All subsequent presidents had emphasized concerns over crime, violence, and poverty with Zuma and Ramaphosa sharing concerns about corruption. This implies a timeline of when issues surrounding corruption were becoming concerning. Additionally, Ramaphosa mentions the state of disaster, in context of the COVID-19 pandemic (Arndt et al., 2020), as well as the expropriation of land as he is determined to fulfil the promise of lawful land reform post-apartheid.</p>
 </section>
 <section id="lda-topic-analysis-using-bigrams-1" class="level3">
 <h3 class="anchored" data-anchor-id="lda-topic-analysis-using-bigrams-1">LDA Topic analysis using Bigrams</h3>
-<p>As we can see in Figure #<strong>nat_LDA_all_pres</strong>, the bigrams with high beta probabilities are prevalent in both topics and so there is not much discrimination between the two topics. However, if we look at the tails of both bar plots, we see some differences. Topic 1 has themes of unity, improvement, and new opportunities possibly in relation to nation building, while topic 2 has themes of freedom, strength, opposition and justice possibly in relation to the crime, poverty and social injustice.</p>
-<p>The log2(topic 1/topic 2) plots above in Figure #<strong>nat_LDA_per_pres</strong> shows the bigrams with the greatest difference between the two topics. In the deKlerk, Mandela, Mbeki and Ramaphosa plots, we see a divide where topic 1 (red) is mostly about social injustice, (political) violence and unemployment or economic crises, while topic 2 (green) is hopeful, with topics such as freedom, peace and triumph. Distinction between the topics are not possible for Motlanthe, possibly due to the fact that only 1 speech is available for this class. We see that Zuma is also an outlier with one theme mainly focused on negative sentiment such as (political) crime, social injustice and poverty.</p>
+<p>As we can see in <a href="#fig-LDA_All">Figure&nbsp;9</a> , the bigrams with high beta probabilities are prevalent in both topics and so there is not much discrimination between the two topics. However, if we look at the tails of both bar plots, we see some differences. Topic 1 has themes of unity, improvement, and new opportunities possibly in relation to nation building, while topic 2 has themes of freedom, strength, opposition and justice possibly in relation to the crime, poverty and social injustice.</p>
+<p>The log2(topic 1/topic 2) plots above in <a href="#fig-LDA_per_prez">Figure&nbsp;10</a> shows the bigrams with the greatest difference between the two topics. In the deKlerk, Mandela, Mbeki and Ramaphosa plots, we see a divide where topic 1 (red) is mostly about social injustice, (political) violence and unemployment or economic crises, while topic 2 (green) is hopeful, with topics such as freedom, peace and triumph. Distinction between the topics are not possible for Motlanthe, possibly due to the fact that only 1 speech is available for this class. We see that Zuma is also an outlier with one theme mainly focused on negative sentiment such as (political) crime, social injustice and poverty.</p>
 <p>This analysis shows that most presidential speeches have polarity, with positive sentiment touching on topics such as freedom, hope and peace, in contrast to negative sentiment touching on topics of crime, social injustices and poverty.</p>
 <p>For the document-topic probabilities, we see that most presidents had a relatively stable set of interests and themes in their speeches. Table 1 contains the top terms for each topic, we can infer that topic 1 relates international relations such as the world cup and United Nations, additionally the local community. Topic 2 revolves around economic growth, topic 3 is focused on public services and humanitarian themes and topic 4 seemingly involves government expenditures and regional government. From Figure #, we see that Mbeki, Zuma and Motlanthe focused on Topic 1 which may be due to his concerns over poverty and job creation as seen from sentiment analysis and Zuma and Motlanthe as they were involved in the 2010 world cup. Ramaphosa, Zuma and Mandela appeared in topic 2, Ramaphosa shared themes of economic growth the most, likely due to the bleak financial climate during and after COVID-19. Mandela and De Klerk were most concerned with humanitarian issues due to the abolishment of the apartheid regime. Finally, Zuma was most present in topic 4, a topic surrounding government expenditure and the eastern cape. This may be due to his frequent expression of concern over corruption.</p>
 <p>Overall, we see a mostly discrete delineation of themes between Zuma, Ramaphosa, Mandela and Mbeki. De Klerk and Motlanthe shared themes with other presidents likely due to having given a disproportionate number of speeches compared to other presidents.</p>

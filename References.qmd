@@ -14,11 +14,11 @@ title: "References"
 
 -   Guo, L., Vargo, C.J., Pan, Z., Ding, W. and Ishwar, P. (2016). Big Social Data Analytics in Journalism and Mass Communication. Journalism & Mass Communication Quarterly, 93(2), pp.332--359. doi:https://doi.org/10.1177/1077699016639231.
 
--    Hong, L. and Davison, B.D., 2010, July. Empirical study of topic modeling in twitter. In Proceedings of the first workshop on social media analytics (pp. 80-88).
+-   Hong, L. and Davison, B.D., 2010, July. Empirical study of topic modeling in twitter. In Proceedings of the first workshop on social media analytics (pp. 80-88).
 
 -   Obeng-Odoom, F. (2020). The African Continental Free Trade Area. American Journal of Economics and Sociology, 79(1), 167-197.
 
--   Rao T, Srivastava S (2012) Analyzing stock market movements using Twitter sentiment analysis. In: ASONAM\'12 Proceedings of the 2012 international conference on advances in social networks analysis and mining (ASONAM 2012), pp 119--123
+-   Rao T, Srivastava S (2012) Analyzing stock market movements using Twitter sentiment analysis. In: ASONAM'12 Proceedings of the 2012 international conference on advances in social networks analysis and mining (ASONAM 2012), pp 119--123
 
 -   Singla Z, Randhawa S, Jain S (2017) Statistical and sentiment analysis of consumer product reviews. In: 8th International conference on computing, communication and networking technologies (ICCCNT), pp 1--6
 

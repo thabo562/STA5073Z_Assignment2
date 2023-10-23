@@ -32,7 +32,7 @@ Bhardwaj et al. (2015)describes a system in which sentiment analysis is applied 
 
 Manufacturers and companies may also benefit from sentiment analysis by assessing customer preferences and seasonal, market trends. These organizations can perform sentiment analysis on customer review data with the aim of improving product- or service quality. Singla et al. (2017) performed sentiment analysis on Amazon phone review data by assessing the negative and positive polarity in customer responses, with sentiments such as anger, anticipation, joy, and disgust, to name a few. The authors developed a support vector machine (SVM) model for sentiment classification and found that most customers preferred Samsung phones.
 
-Sentiment analysis has also been used in political science research, where these studies usually use data obtained from social media sites, in addition to various news platforms. Singh et al. (2017)^3^ proposed a method to assess people's opinions and biases towards demonetization, an experiment particularly relevant in India, where the government demonetized ₹500 and ₹1000 banknotes. The authors used a lexicon-based approach, namely Valence Aware Dictionary and Sentiment Reasoner (VADER) for sentiment analysis of tweet data.
+Sentiment analysis has also been used in political science research, where these studies usually use data obtained from social media sites, in addition to various news platforms. Singh et al. (2017) proposed a method to assess people's opinions and biases towards demonetization, an experiment particularly relevant in India, where the government demonetized ₹500 and ₹1000 banknotes. The authors used a lexicon-based approach, namely Valence Aware Dictionary and Sentiment Reasoner (VADER) for sentiment analysis of tweet data.
 
 In the past, public opinions were usually collected using interviews and surveys, however, in the modern era of social media, there is a multitude of shared opinions expressed on online platforms such as Twitter and Facebook. Researchers are now interested in how news media can outline a campaign or a public figure (such as a politician) and how this affects public opinion. In contrast, researchers are also interested in how social media platforms and public opinions can influence news agenda.
 
@@ -101,7 +101,7 @@ speech_data_sentiment <- speech_data_tidy %>%
 
 ```{r}
 #| fig-cap: "Average number of sentences per president"
-#| label: sent_count
+#| label: fig-sent_count
 
 avg_Speech_length<- Sona_S_tokenized %>% group_by(filename,president_13)%>%
                       summarise("count"= n())%>%
@@ -116,18 +116,17 @@ ggplot(avg_Speech_length, aes(y=as.factor(president_13), x= Average, fill= facto
 
 ```
 
-Two distinct patterns stand out when examining the data, the first being the shortness of F.W. de Klerk's speech. His final pre-election speech in office consisted of 97 sentences, which pale in comparison to other pre-election speeches in the data set. For instance, Nelson Mandela's pre-election speech in 1999 was substantially longer with 288 sentences, while Jacob Zuma's pre-election speech of 2014 was even more extensive with 309 sentences.
+Two distinct patterns stand out when examining the @fig-sent_count , the first being the shortness of F.W. de Klerk's speech. His final pre-election speech in office consisted of 97 sentences, which pale in comparison to other pre-election speeches in the data set. For instance, Nelson Mandela's pre-election speech in 1999 was substantially longer with 288 sentences, while Jacob Zuma's pre-election speech of 2014 was even more extensive with 309 sentences.
 
 On the other hand, Ramaphosa stands out for his consistent and relatively lengthy speeches. On average, his speeches run for about 327 sentences. In contrast, the other presidents, namely Mandela, Mbeki, Motlanthe, Zuma, fell within a similar range, with an average of around 250 sentences per speech. These distinct patterns shed light on the varying communication styles and approaches of these South African presidents in their speeches.
 
 Additionally, it is important to consider the timing of each speech, as it significantly influences the communication style chosen by each president. These speeches fall into three main categories: pre-election, post-election, and general SONAs. The distinct goals and messages associated with each category result in varying sentiments in their speeches. Pre-election speeches are characterized by optimism, unity, and empowerment aimed at voters, naturally resulting in a predominantly positive sentiment. Post-election speeches convey sentiments of gratitude and hope, expressing thanks to the electorate and fostering a sense of hope for the future, also leading to a largely positive sentiment. In contrast, general annual SONAs often focus on reassurance and policy changes. These speeches aim to reassure the public about the government's commitment to addressing various issues and to announce policy changes. While the sentiment remains positive, it may be less pronounced than in pre-election and post-election speeches.
 
-The figure below illustrates the evolving sentiment of these presidential speeches over time, reflecting how the timing and specific objectives of each speech category contribute to the overall sentiment
+@fig-sent_time illustrates the evolving sentiment of these presidential speeches over time, reflecting how the timing and specific objectives of each speech category contribute to the overall sentiment
 
 ```{r}
 #| fig-cap: "Speech sentiment over time"
-#| label: sent_time 
-#| 
+#| label: fig-sent_time 
 sentiments_per_speech <- speech_data_sentiment %>%
                           group_by(filename,president_13,date)%>%
                         summarize(net_sentiment = (sum(value)), .groups = "keep")
@@ -143,7 +142,7 @@ ggplot(sentiments_per_speech, aes(x=date, y=net_sentiment)) +
 
 ```
 
-The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki\'s general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively @sent_
+The net sentiment in the dataset was determined by adding up the values associated with positive and negative words, as provided by the AFINN lexicon. Among the presidents in the dataset, F.W. de Klerk is the earliest. Notably, the final speech of his presidency, while still maintaining a positive sentiment, registers as having the lowest net sentiment in the entire dataset. Based on the data it cannot be concluded whether this is due to the speech being short or his general speech making style. The general trend in the data for higher sentiment during election time holds for most of the speeches over time for each president Mbeki\'s general SONAs of 2013 and 2015 stand out as exceptions, featuring the highest net sentiments in the dataset, with values of 514 and 513, respectively
 
 ## Methods
 
@@ -578,14 +577,17 @@ p12 = df_bigrams %>% filter(sentiment == "positive" & president_13 == "Motlanthe
 ```
 
 ```{r}
-
+#| fig-cap: "Top 5 positive and negative Bigrams"
+#| label: fig-Pos_Neg_Bigrams
+#|  
 grid.arrange(p5,p11,p1,p7,p2,p8, ncol=2)
 grid.arrange(p6,p12,p4,p10, p3,p9,ncol=2)
 
 ```
 
 ```{r}
-#| fig-cap: "Top 5 bigrams related to negative sentiments"
+#| fig-cap: "Top 5 bigrams Across Presidents"
+#| label: fig-Top_bigrams
 
 p1 = df_bigrams %>% filter(sentiment == "negative")%>%
   count(bigram, sort = TRUE) %>%
@@ -719,6 +721,7 @@ trigrams_sep <- trigrams_sep %>%
 
 ```{r}
 #| fig-cap: "Barplot Showing the 5 Most Frequently Used Negative Trigrams Overall"
+#| label: fig-Top_trigrams
 
 
 ## positive overall
@@ -730,7 +733,7 @@ a<- trigrams_sep %>%
   geom_col() +
   coord_flip() +
   xlab('') +
-  labs(title = "Top 5 Positive Trigrams", caption = "Figure 1: Barplot Showing the 10 Most Frequently Used Positive Trigrams Overall") +  # Add a title and figure legend
+  labs(title = "Top 5 Positive Trigrams", caption = " ") +  # Add a title and figure legend
   scale_fill_viridis(discrete = TRUE) +
   theme(legend.position = "none")  # Remove the legend
 
@@ -751,7 +754,8 @@ grid.arrange(a,b,ncol=2)
 ```
 
 ```{r}
-# top positive words per president 
+#| fig-cap: "10 Most Frequently Used Positive Trigrams For Each President"
+#| label: fig-Pos_Trigrams
 
 trigrams_sep %>%
   filter(net_sentiment > 0) %>%
@@ -763,13 +767,15 @@ trigrams_sep %>%
   coord_flip() +
   xlab('') +
   facet_wrap(~president_13, scales = 'free') +
-  labs(title = "Top 10 Positive Trigrams per President", caption = "Figure 3:Barplot Showing the 10 Most Frequently Used Positive Trigrams For Each President") +  # Add a title and figure legend
+  labs(title = "Top 10 Positive Trigrams per President", caption = "") +  # Add a title and figure legend
   scale_fill_viridis(discrete = TRUE) +
   theme(legend.position = "none")  # Remove the legend
 ```
 
 ```{r}
-# top negative words per president 
+#| fig-cap: "10 Most Frequently Used Negative Trigrams For Each President"
+#| label: fig-Neg_Trigrams
+
 
 trigrams_sep %>%
   filter(net_sentiment < 0) %>%
@@ -781,7 +787,7 @@ trigrams_sep %>%
   coord_flip() +
   xlab('') +
   facet_wrap(~president_13, scales = 'free') +
-  labs(title = "Top 10 Negative Trigrams per President", caption = "Figure 4: Barplot Showing the 10 Most Frequently Used Negative Trigrams For Each President") +  # Add a title and figure legend
+  labs(title = "Top 10 Negative Trigrams per President", caption = "") +  # Add a title and figure legend
   scale_fill_viridis(discrete = TRUE) +
   theme(legend.position = "none")  # Remove the legend
 
@@ -794,6 +800,7 @@ The figure below shows the results of topic analysis using beta probabilities (b
 
 ```{r}
 #| fig-cap: "Barplots showing results of LDA topic modelling using beta (bigram-topic) probabilities and k = 2 topics, where topic 1 is shown on the left and topic 2 is shown on the right"
+#| label: fig-LDA_All
 #frequency of each bigram in each document
 sona_tdf <- df_bigrams %>%
   group_by(filename,  bigram) %>%
@@ -1196,6 +1203,7 @@ p6 = beta_spread %>%
 
 ```{r}
 #| fig-cap: "Barplots showing results of LDA topic modelling using beta (bigram-topic) probabilities and k = 2 topics for each former president class. Topic 1 is shown in red and topic 2 is shown in green."
+#| label: fig-LDA_per_prez
 grid.arrange(p1, p2,
              p3, p4, 
              p5, p6,
@@ -1206,25 +1214,23 @@ grid.arrange(p1, p2,
 
 ### Sentiment Analysis for Bigrams 
 
-In Figure #nat_per_pres_sentiment.png above, we see that DeKlerk\'s top 5 bigrams with negative sentiment are about hopelessness and boycotting, possibly in relation to the end of the Apartheid regime. Mandela and Mbeki\'s top 5 bigrams with negative sentiment are mainly about challenges, such as crime and poverty. We see that Motlanthe\'s top 5 bigrams with negative sentiment is also focused on poverty, but now special attention is given to criminal justice. Zuma\'s top 5 bigrams with negative sentiment is also about finances, but also pays attention to violence. Ramaphosa\'s top 5 bigrams with negative sentiment is focused on (gender based) violence.
+In @fig-Pos_Neg_Bigrams-1 and @fig-Pos_Neg_Bigrams-2 we see that DeKlerk\'s top 5 bigrams with negative sentiment are about hopelessness and boycotting, possibly in relation to the end of the Apartheid regime. Mandela and Mbeki\'s top 5 bigrams with negative sentiment are mainly about challenges, such as crime and poverty. We see that Motlanthe\'s top 5 bigrams with negative sentiment is also focused on poverty, but now special attention is given to criminal justice. Zuma\'s top 5 bigrams with negative sentiment is also about finances, but also pays attention to violence. Ramaphosa\'s top 5 bigrams with negative sentiment is focused on (gender based) violence.
 
 President deKlerk\'s top 5 bigrams with positive sentiment looks towards freedom and peace, which again points to the end of Apartheid. All other president\'s top 5 bigrams with positive sentiment have undertones of hope and improvement.
 
-Albeit a common trend of poverty and crime post-Apartheid, we see that the general sentiment is positive across all presidents, which is reinforced by Figure #nat_all_pres_sentiment.png were the frequency of positive sentiment far surpasses that of the negative sentiment.
+Albeit a common trend of poverty and crime post-Apartheid, we see that the general sentiment is positive across all presidents, in @fig-Top_bigrams which is reinforced by were the frequency of positive sentiment far surpasses that of the negative sentiment.
 
 ### Sentiment Analysis for trigrams 
 
-The results of the trigram split expresses very similar insights to the bigram split. Referring to figure 3, we note that De Klerk and Mandela echoed very similar positive remarks regarding peace, reconciliation and freedom at the time due to the abolishment of the apartheid regime and welcoming of the freedom alliance. Mbeki follows with discussions of black economic empowerment, showing the developments in concerns during the countries plight for equality. Motlanthe\'s sentiment analysis was not insightful, this is likely since his presidency lasted 8 months. Zuma frequently mentioned the public works programme, which he was launching in 2014 and Ramaphosa also mentioned the African Continental Free Trade Area (ACFTA), echoing his support for collaboration with other African nations (Obeng-Odoom, 2020).
+The results of the trigram split expresses very similar insights to the bigram split. Referring to @fig-Pos_Trigrams we note that De Klerk and Mandela echoed very similar positive remarks regarding peace, reconciliation and freedom at the time due to the abolishment of the apartheid regime and welcoming of the freedom alliance. Mbeki follows with discussions of black economic empowerment, showing the developments in concerns during the countries plight for equality. Motlanthe\'s sentiment analysis was not insightful, this is likely since his presidency lasted 8 months. Zuma frequently mentioned the public works programme, which he was launching in 2014 and Ramaphosa also mentioned the African Continental Free Trade Area (ACFTA), echoing his support for collaboration with other African nations (Obeng-Odoom, 2020).
 
-Figure 4 depicts De Klerk\'s negative sentiments are insightful into the public opinion at this time, he mostly spoke about concerns and boycotting, likely trying to placate the public\'s concerns over the transition and trying to discourage boycotting of elections. All subsequent presidents had emphasized concerns over crime, violence, and poverty with Zuma and Ramaphosa sharing concerns about corruption. This implies a timeline of when issues surrounding corruption were becoming concerning. Additionally, Ramaphosa mentions the state of disaster, in context of the COVID-19 pandemic (Arndt et al., 2020), as well as the expropriation of land as he is determined to fulfil the promise of lawful land reform post-apartheid.
-
-In figure 6, for 2016 we see \"die kind wat\", being categorized as a negative statement, when it is in fact a neutral statement. This highlights a limitation of this assignment as SA has a diverse mix of languages and using only an English lexicon leads to phrases in other languages being miscategorized or not available.
+@fig-Neg_Trigrams depicts De Klerk\'s negative sentiments are insightful into the public opinion at this time, he mostly spoke about concerns and boycotting, likely trying to placate the public\'s concerns over the transition and trying to discourage boycotting of elections. All subsequent presidents had emphasized concerns over crime, violence, and poverty with Zuma and Ramaphosa sharing concerns about corruption. This implies a timeline of when issues surrounding corruption were becoming concerning. Additionally, Ramaphosa mentions the state of disaster, in context of the COVID-19 pandemic (Arndt et al., 2020), as well as the expropriation of land as he is determined to fulfil the promise of lawful land reform post-apartheid.
 
 ### LDA Topic analysis using Bigrams 
 
-As we can see in Figure \#**nat_LDA_all_pres**, the bigrams with high beta probabilities are prevalent in both topics and so there is not much discrimination between the two topics. However, if we look at the tails of both bar plots, we see some differences. Topic 1 has themes of unity, improvement, and new opportunities possibly in relation to nation building, while topic 2 has themes of freedom, strength, opposition and justice possibly in relation to the crime, poverty and social injustice.
+As we can see in @fig-LDA_All , the bigrams with high beta probabilities are prevalent in both topics and so there is not much discrimination between the two topics. However, if we look at the tails of both bar plots, we see some differences. Topic 1 has themes of unity, improvement, and new opportunities possibly in relation to nation building, while topic 2 has themes of freedom, strength, opposition and justice possibly in relation to the crime, poverty and social injustice.
 
-The log2(topic 1/topic 2) plots above in Figure \#**nat_LDA_per_pres** shows the bigrams with the greatest difference between the two topics. In the deKlerk, Mandela, Mbeki and Ramaphosa plots, we see a divide where topic 1 (red) is mostly about social injustice, (political) violence and unemployment or economic crises, while topic 2 (green) is hopeful, with topics such as freedom, peace and triumph. Distinction between the topics are not possible for Motlanthe, possibly due to the fact that only 1 speech is available for this class. We see that Zuma is also an outlier with one theme mainly focused on negative sentiment such as (political) crime, social injustice and poverty.
+The log2(topic 1/topic 2) plots above in @fig-LDA_per_prez shows the bigrams with the greatest difference between the two topics. In the deKlerk, Mandela, Mbeki and Ramaphosa plots, we see a divide where topic 1 (red) is mostly about social injustice, (political) violence and unemployment or economic crises, while topic 2 (green) is hopeful, with topics such as freedom, peace and triumph. Distinction between the topics are not possible for Motlanthe, possibly due to the fact that only 1 speech is available for this class. We see that Zuma is also an outlier with one theme mainly focused on negative sentiment such as (political) crime, social injustice and poverty.
 
 This analysis shows that most presidential speeches have polarity, with positive sentiment touching on topics such as freedom, hope and peace, in contrast to negative sentiment touching on topics of crime, social injustices and poverty.
 
